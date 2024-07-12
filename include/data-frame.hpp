@@ -2,15 +2,16 @@
 #define __DATA_FRAME_HPP__
 
 #include <vector>
+#include <string>
 
 class DataFrame {
   private:
     unsigned char type;
     size_t sz;
     std::vector <unsigned char> data;
-    void *exeFunc;
+    const void *exeFunc;
     void *exeFuncParam;
-    void *postFunc;
+    const void *postFunc;
     void *postFuncParam;
     DataFrame *next;
   public:
@@ -38,15 +39,15 @@ class DataFrame {
               size_t sz,
               const unsigned char *data,
               const void *exeFunc,
-              const void *exeFuncParam);
+              void *exeFuncParam);
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
               size_t sz,
               const unsigned char *data,
               const void *exeFunc,
-              const void *exeFuncParam,
+              void *exeFuncParam,
               const void *postFunc,
-              const void *postFuncParam
+              void *postFuncParam
               );
 
     ~DataFrame();
@@ -61,7 +62,7 @@ class DataFrame {
 
     void setData(const unsigned char *data, size_t sz);
 
-    void setData(const std::vector<unsigned char> data, size_t sz);
+    void setData(const std::vector<unsigned char> data);
 
     void setExecuteFunction(const void *_func, void *_param);
 
@@ -75,10 +76,13 @@ class DataFrame {
 
     size_t getReference(std::vector<unsigned char> reference);
 
-    size_t getData(unsigned char *data, size_t sizeOfReference);
+    size_t getData(unsigned char *data, size_t sizeOfData);
 
     size_t getData(std::vector<unsigned char> data);
 
+    std::string getDataFrameFormat();
+
+    DataFrame& operator+=(const DataFrame &obj);
 };
 
 #endif
