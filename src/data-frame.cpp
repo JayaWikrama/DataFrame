@@ -195,3 +195,8 @@ DataFrame& DataFrame::operator+=(const DataFrame &obj){
   }
   return *this;
 }
+
+DataFrame& DataFrame::operator+(const DataFrame &obj){
+  *this += obj;
+  return *this;
+}

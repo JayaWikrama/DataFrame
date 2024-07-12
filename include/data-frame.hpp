@@ -83,6 +83,8 @@ class DataFrame {
     std::string getDataFrameFormat();
 
     DataFrame& operator+=(const DataFrame &obj);
+
+    DataFrame& operator+(const DataFrame &obj);
 };
 
 #endif
