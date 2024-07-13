@@ -9,10 +9,14 @@ class DataFrame {
     unsigned char type;
     size_t sz;
     std::vector <unsigned char> data;
+#ifdef __USE_EXE_FUNC
     const void *exeFunc;
     void *exeFuncParam;
+#endif
+#ifdef __USE_POST_FUNC
     const void *postFunc;
     void *postFuncParam;
+#endif
     DataFrame *next;
   public:
     typedef enum _FRAME_TYPE_t {
@@ -35,12 +39,24 @@ class DataFrame {
               size_t sz,
               const unsigned char *data);
 
+#ifdef __USE_EXE_FUNC
     DataFrame(DataFrame::FRAME_TYPE_t type,
               size_t sz,
               const unsigned char *data,
               const void *exeFunc,
               void *exeFuncParam);
+#endif
 
+#ifdef __USE_POST_FUNC
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              size_t sz,
+              const unsigned char *data,
+              const void *postFunc,
+              void *postFuncParam);
+#endif
+
+#ifdef __USE_EXE_FUNC
+#ifdef __USE_POST_FUNC
     DataFrame(DataFrame::FRAME_TYPE_t type,
               size_t sz,
               const unsigned char *data,
@@ -49,6 +65,8 @@ class DataFrame {
               const void *postFunc,
               void *postFuncParam
               );
+#endif
+#endif
 
     ~DataFrame();
 
@@ -64,9 +82,13 @@ class DataFrame {
 
     void setData(const std::vector<unsigned char> data);
 
+#ifdef __USE_EXE_FUNC
     void setExecuteFunction(const void *_func, void *_param);
+#endif
 
+#ifdef __USE_POST_FUNC
     void setPostExecuteFunction(const void *_func, void *_param);
+#endif
 
     DataFrame::FRAME_TYPE_t getType();
 
