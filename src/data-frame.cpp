@@ -204,10 +204,23 @@ size_t DataFrame::getData(std::vector<unsigned char> data){
 
 std::string DataFrame::getDataFrameFormat(){
   std::string result = "";
+  static char dthex[3];
   const DataFrame *tmp = this;
+  dthex[2] = 0x00;
   while (tmp != nullptr){
-    if (result.length() > 0) result += "|" + frameTypeStr[tmp->type] + "[" + std::to_string(this->sz) + "]";
-    else result = frameTypeStr[tmp->type] + "[" + std::to_string(this->sz) + "]";
+    result += frameTypeStr[tmp->type] + "[size:" + std::to_string(this->sz) + "]:<<";
+    for (auto i = tmp->data.begin(); i != tmp->data.end(); i++){
+      sprintf(dthex, "%02X", static_cast<int>(*i));
+      result += dthex;
+    }
+    result += ">>";
+#ifdef __USE_EXE_FUNC
+    result += "<<exeFunc:" + std::to_string((unsigned long long) this->exeFunc) + ">>";
+#endif
+#ifdef __USE_POST_FUNC
+    result += "<<postFunc:" + std::to_string((unsigned long long) this->postFunc) + ">>";
+#endif
+    result += "\n";
     tmp = tmp->next;
   }
   return result;
