@@ -74,40 +74,32 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
   this->next = nullptr;
 }
 
-#ifdef __USE_EXE_FUNC
+#if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
                      size_t sz,
                      const unsigned char *data,
+#ifdef __USE_EXE_FUNC
                      const void *exeFunc,
-                     void *exeFuncParam){
-  this->type = static_cast<unsigned char>(type);
-  this->sz = sz;
-  this->data.assign(data, data + sz);
-  this->exeFunc = exeFunc;
-  this->exeFuncParam = exeFuncParam;
-#ifdef __USE_POST_FUNC
-  this->postFunc = nullptr;
-  this->postFuncParam = nullptr;
-#endif
-  this->next = nullptr;
-}
-#endif
-
-#ifdef __USE_POST_FUNC
-DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
-                     size_t sz,
-                     const unsigned char *data,
+                     void *exeFuncParam
+#else
                      const void *postFunc,
-                     void *postFuncParam){
+                     void *postFuncParam
+#endif
+){
   this->type = static_cast<unsigned char>(type);
   this->sz = sz;
   this->data.assign(data, data + sz);
 #ifdef __USE_EXE_FUNC
   this->exeFunc = exeFunc;
   this->exeFuncParam = exeFuncParam;
-#endif
+#ifdef __USE_POST_FUNC
   this->postFunc = nullptr;
   this->postFuncParam = nullptr;
+#endif
+#else
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+#endif
   this->next = nullptr;
 }
 #endif

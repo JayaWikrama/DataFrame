@@ -39,20 +39,17 @@ class DataFrame {
               size_t sz,
               const unsigned char *data);
 
-#ifdef __USE_EXE_FUNC
+#if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     DataFrame(DataFrame::FRAME_TYPE_t type,
               size_t sz,
               const unsigned char *data,
+#ifdef __USE_EXE_FUNC
               const void *exeFunc,
               void *exeFuncParam);
-#endif
-
-#ifdef __USE_POST_FUNC
-    DataFrame(DataFrame::FRAME_TYPE_t type,
-              size_t sz,
-              const unsigned char *data,
+#else
               const void *postFunc,
               void *postFuncParam);
+#endif
 #endif
 
 #ifdef __USE_EXE_FUNC
