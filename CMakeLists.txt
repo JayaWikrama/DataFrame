@@ -41,6 +41,16 @@ if(VERBOSE)
   set(CMAKE_VERBOSE_MAKEFILE ON)
 endif()
 
+option(USE_EXE_FUNC "Enable Exe Func and Its Param" OFF)
+if (USE_EXE_FUNC)
+  add_definitions(-D__USE_EXE_FUNC)
+endif()
+
+option(USE_POST_EXE_FUNC "Enable Post Exe Func and Its Param" OFF)
+if (USE_POST_EXE_FUNC)
+  add_definitions(-D__USE_POST_FUNC)
+endif()
+
 # Find and Check Library
 find_package(PkgConfig REQUIRED)
 #find_package(GTest REQUIRED)
