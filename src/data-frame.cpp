@@ -160,15 +160,15 @@ void DataFrame::setData(const std::vector<unsigned char> data){
 
 #ifdef __USE_EXE_FUNC
 void DataFrame::setExecuteFunction(const void *_func, void *_param){
-  this->exeFunc = exeFunc;
-  this->exeFuncParam = exeFuncParam;
+  this->exeFunc = _func;
+  this->exeFuncParam = _param;
 }
 #endif
 
 #ifdef __USE_POST_FUNC
 void DataFrame::setPostExecuteFunction(const void *_func, void *_param){
-  this->postFunc;
-  this->postFuncParam;
+  this->postFunc = _func;
+  this->postFuncParam = _param;
 }
 #endif
 
