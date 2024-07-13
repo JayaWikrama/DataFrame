@@ -101,6 +101,10 @@ class DataFrame {
 
     std::string getDataFrameFormat();
 
+#if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
+    void execute();
+#endif
+
     DataFrame& operator+=(const DataFrame &obj);
 
     DataFrame& operator+(const DataFrame &obj);

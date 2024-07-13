@@ -226,6 +226,27 @@ std::string DataFrame::getDataFrameFormat(){
   return result;
 }
 
+#if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
+void DataFrame::execute(){
+  const DataFrame *tmp = this;
+  while (tmp != nullptr){
+#ifdef __USE_EXE_FUNC
+    if (tmp->exeFunc != nullptr){
+      void (*callback)(DataFrame &, void *) = (void (*)(DataFrame &, void *))this->exeFunc;
+      callback(*this, this->exeFuncParam);
+    }
+#endif
+#ifdef __USE_POST_FUNC
+    if (tmp->postFunc != nullptr){
+      void (*callback)(DataFrame &, void *) = (void (*)(DataFrame &, void *))this->postFunc;
+      callback(*this, this->postFuncParam);
+    }
+#endif
+    tmp = tmp->next;
+  }
+}
+#endif
+
 DataFrame& DataFrame::operator+=(const DataFrame &obj){
   DataFrame *tmp = this;
   while (tmp->next != nullptr){
