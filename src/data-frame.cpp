@@ -208,17 +208,17 @@ std::string DataFrame::getDataFrameFormat(){
   const DataFrame *tmp = this;
   dthex[2] = 0x00;
   while (tmp != nullptr){
-    result += frameTypeStr[tmp->type] + "[size:" + std::to_string(this->sz) + "]:<<";
+    result += frameTypeStr[tmp->type] + "[size:" + std::to_string(tmp->sz) + "]:<<";
     for (auto i = tmp->data.begin(); i != tmp->data.end(); i++){
       sprintf(dthex, "%02X", static_cast<int>(*i));
       result += dthex;
     }
     result += ">>";
 #ifdef __USE_EXE_FUNC
-    result += "<<exeFunc:" + std::to_string((unsigned long long) this->exeFunc) + ">>";
+    result += "<<exeFunc:" + std::to_string((unsigned long long) tmp->exeFunc) + ">>";
 #endif
 #ifdef __USE_POST_FUNC
-    result += "<<postFunc:" + std::to_string((unsigned long long) this->postFunc) + ">>";
+    result += "<<postFunc:" + std::to_string((unsigned long long) tmp->postFunc) + ">>";
 #endif
     result += "\n";
     tmp = tmp->next;
