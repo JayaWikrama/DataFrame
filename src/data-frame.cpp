@@ -203,8 +203,8 @@ size_t DataFrame::getReference(unsigned char *reference, size_t sizeOfReference)
   return size;
 }
 
-size_t DataFrame::getReference(std::vector<unsigned char> reference){
-  reference[0] = 0x00;
+size_t DataFrame::getReference(std::vector<unsigned char> &reference){
+  reference.clear();
   if (this->isReference == false){
     return 0;
   }
@@ -218,7 +218,7 @@ size_t DataFrame::getData(unsigned char *data, size_t sizeOfData){
   return size;
 }
 
-size_t DataFrame::getData(std::vector<unsigned char> data){
+size_t DataFrame::getData(std::vector<unsigned char> &data){
   data.assign(this->data.begin(), this->data.end());
   return this->data.size();
 }

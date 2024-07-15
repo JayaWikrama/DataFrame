@@ -94,11 +94,11 @@ class DataFrame {
 
     size_t getReference(unsigned char *reference, size_t sizeOfReference);
 
-    size_t getReference(std::vector<unsigned char> reference);
+    size_t getReference(std::vector<unsigned char> &reference);
 
     size_t getData(unsigned char *data, size_t sizeOfData);
 
-    size_t getData(std::vector<unsigned char> data);
+    size_t getData(std::vector<unsigned char> &data);
 
     std::string getDataFrameFormat();
 
