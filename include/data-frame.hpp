@@ -72,9 +72,9 @@ class DataFrame {
 
     void setSize(size_t sz);
 
-    void setRefference(const unsigned char *reference, size_t sz);
+    void setReference(const unsigned char *reference, size_t sz);
 
-    void setRefference(const std::vector<unsigned char> reference);
+    void setReference(const std::vector<unsigned char> reference);
 
     void setData(const unsigned char *data, size_t sz);
 

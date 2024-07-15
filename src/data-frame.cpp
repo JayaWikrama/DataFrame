@@ -147,12 +147,12 @@ void DataFrame::setSize(size_t sz){
   this->sz = sz;
 }
 
-void DataFrame::setRefference(const unsigned char *reference, size_t sz){
+void DataFrame::setReference(const unsigned char *reference, size_t sz){
   this->isReference = true;
   this->data.assign(reference, reference + sz);
 }
 
-void DataFrame::setRefference(const std::vector<unsigned char> reference){
+void DataFrame::setReference(const std::vector<unsigned char> reference){
   this->isReference = true;
   this->data.assign(reference.begin(), reference.end());
   this->sz = this->data.size();
