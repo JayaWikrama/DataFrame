@@ -93,7 +93,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 ){
   this->type = static_cast<unsigned char>(type);
   if (data != nullptr) this->isReference = true;
-  else this->reference = false;
+  else this->isReference = false;
   this->sz = sz;
   if (data != nullptr) this->data.assign(data, data + sz);
 #ifdef __USE_EXE_FUNC
@@ -121,7 +121,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
                      void *postFuncParam){
   this->type = static_cast<unsigned char>(type);
   if (data != nullptr) this->isReference = true;
-  else this->reference = false;
+  else this->isReference = false;
   this->sz = sz;
   if (data != nullptr) this->data.assign(data, data + sz);
   this->exeFunc = exeFunc;
