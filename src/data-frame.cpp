@@ -13,6 +13,7 @@ const std::string frameTypeStr[] = {
 
 DataFrame::DataFrame(){
   this->type = static_cast<unsigned char>(DataFrame::FRAME_TYPE_START_BYTES);
+  this->isReference = false;
   this->sz = 0;
   this->data.clear();
 #ifdef __USE_EXE_FUNC
@@ -28,6 +29,7 @@ DataFrame::DataFrame(){
 
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type){
   this->type = static_cast<unsigned char>(type);
+  this->isReference = false;
   this->sz = 0;
   this->data.clear();
 #ifdef __USE_EXE_FUNC
@@ -44,6 +46,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type){
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
                      size_t sz){
   this->type = static_cast<unsigned char>(type);
+  this->isReference = false;
   this->sz = sz;
   this->data.clear();
 #ifdef __USE_EXE_FUNC
@@ -61,8 +64,10 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
                      size_t sz,
                      const unsigned char *data){
   this->type = static_cast<unsigned char>(type);
+  if (data != nullptr) this->isReference = true;
+  else this->isReference = false;
   this->sz = sz;
-  this->data.assign(data, data + sz);
+  if (data != nullptr) this->data.assign(data, data + sz);
 #ifdef __USE_EXE_FUNC
   this->exeFunc = nullptr;
   this->exeFuncParam = nullptr;
@@ -87,8 +92,10 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 #endif
 ){
   this->type = static_cast<unsigned char>(type);
+  if (data != nullptr) this->isReference = true;
+  else this->reference = false;
   this->sz = sz;
-  this->data.assign(data, data + sz);
+  if (data != nullptr) this->data.assign(data, data + sz);
 #ifdef __USE_EXE_FUNC
   this->exeFunc = exeFunc;
   this->exeFuncParam = exeFuncParam;
@@ -104,8 +111,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 }
 #endif
 
-#ifdef __USE_EXE_FUNC
-#ifdef __USE_POST_FUNC
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
                      size_t sz,
                      const unsigned char *data,
@@ -114,15 +120,16 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
                      const void *postFunc,
                      void *postFuncParam){
   this->type = static_cast<unsigned char>(type);
+  if (data != nullptr) this->isReference = true;
+  else this->reference = false;
   this->sz = sz;
-  this->data.assign(data, data + sz);
+  if (data != nullptr) this->data.assign(data, data + sz);
   this->exeFunc = exeFunc;
   this->exeFuncParam = exeFuncParam;
   this->postFunc = postFunc;
   this->postFuncParam = postFuncParam;
   this->next = nullptr;
 }
-#endif
 #endif
 
 DataFrame::~DataFrame(){
@@ -141,19 +148,23 @@ void DataFrame::setSize(size_t sz){
 }
 
 void DataFrame::setRefference(const unsigned char *reference, size_t sz){
+  this->isReference = true;
   this->data.assign(reference, reference + sz);
 }
 
 void DataFrame::setRefference(const std::vector<unsigned char> reference){
+  this->isReference = true;
   this->data.assign(reference.begin(), reference.end());
   this->sz = this->data.size();
 }
 
 void DataFrame::setData(const unsigned char *data, size_t sz){
+  this->isReference = false;
   this->data.assign(data, data + sz);
 }
 
 void DataFrame::setData(const std::vector<unsigned char> data){
+  this->isReference = false;
   this->data.assign(data.begin(), data.end());
   this->sz = this->data.size();
 }
@@ -181,12 +192,20 @@ size_t DataFrame::getSize(){
 }
 
 size_t DataFrame::getReference(unsigned char *reference, size_t sizeOfReference){
+  reference[0] = 0x00;
+  if (this->isReference == false){
+    return 0;
+  }
   size_t size = (this->data.size() > sizeOfReference ? sizeOfReference : this->data.size());
   memcpy(reference, this->data.data(), size);
   return size;
 }
 
 size_t DataFrame::getReference(std::vector<unsigned char> reference){
+  reference[0] = 0x00;
+  if (this->isReference == false){
+    return 0;
+  }
   reference.assign(this->data.begin(), this->data.end());
   return this->data.size();
 }

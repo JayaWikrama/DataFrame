@@ -7,6 +7,7 @@
 class DataFrame {
   private:
     unsigned char type;
+    bool isReference;
     size_t sz;
     std::vector <unsigned char> data;
 #ifdef __USE_EXE_FUNC
