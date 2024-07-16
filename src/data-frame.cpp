@@ -249,18 +249,18 @@ std::string DataFrame::getDataFrameFormat(){
 
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
 void DataFrame::execute(){
-  const DataFrame *tmp = this;
+  DataFrame *tmp = this;
   while (tmp != nullptr){
 #ifdef __USE_EXE_FUNC
     if (tmp->exeFunc != nullptr){
-      void (*callback)(DataFrame &, void *) = (void (*)(DataFrame &, void *))this->exeFunc;
-      callback(*this, this->exeFuncParam);
+      void (*callback)(DataFrame &, void *) = (void (*)(DataFrame &, void *))tmp->exeFunc;
+      callback(*tmp, tmp->exeFuncParam);
     }
 #endif
 #ifdef __USE_POST_FUNC
     if (tmp->postFunc != nullptr){
-      void (*callback)(DataFrame &, void *) = (void (*)(DataFrame &, void *))this->postFunc;
-      callback(*this, this->postFuncParam);
+      void (*callback)(DataFrame &, void *) = (void (*)(DataFrame &, void *))tmp->postFunc;
+      callback(*tmp, tmp->postFuncParam);
     }
 #endif
     tmp = tmp->next;
