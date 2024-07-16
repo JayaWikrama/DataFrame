@@ -1048,3 +1048,143 @@ TEST_F(DataFrameTest, SetterAndGetter_5) {
     ASSERT_EQ(testStruct.step, 0);
 #endif
 }
+
+/* Test Operator Overloading */
+
+TEST_F(DataFrameTest, OperatorOverloading_1) {
+    dataFrame = DataFrame(DataFrame::FRAME_TYPE_COMMAND);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES);
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"));
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<exeFunc:0>>\n"));
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<postFunc:0>>\n"));
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>>\n"));
+#endif
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_2) {
+    dataFrame = DataFrame(DataFrame::FRAME_TYPE_COMMAND);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES);
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"));
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<exeFunc:0>>\n"));
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<postFunc:0>>\n"));
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_COMMAND[size:0]:<<>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>>\n"));
+#endif
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_3) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES);
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_START_BYTES[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_COMMAND[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<exeFunc:0>><<postFunc:0>>\n"));
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_START_BYTES[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_COMMAND[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<exeFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<exeFunc:0>>\n"));
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_START_BYTES[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_COMMAND[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>><<postFunc:0>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>><<postFunc:0>>\n"));
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(),
+              std::string("FRAME_TYPE_START_BYTES[size:0]:<<>>\n"
+                          "FRAME_TYPE_COMMAND[size:0]:<<>>\n"
+                          "FRAME_TYPE_CONTENT_LENGTH[size:0]:<<>>\n"
+                          "FRAME_TYPE_VALIDATOR[size:0]:<<>>\n"
+                          "FRAME_TYPE_STOP_BYTES[size:0]:<<>>\n"));
+#endif
+}
+
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+TEST_F(DataFrameTest, OperatorOverloading_4) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, (const void *) &exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr, (const void *) &post_exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr, (const void *) &post_exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr, (const void *) &post_exe_func, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, "exepostpostpost");
+}
+#elif defined(__USE_EXE_FUNC)
+TEST_F(DataFrameTest, OperatorOverloading_4) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, (const void *) &exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, "exe");
+}
+#elif defined(__USE_POST_FUNC)
+TEST_F(DataFrameTest, OperatorOverloading_4) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, (const void *) &post_exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, (const void *) &post_exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, (const void *) &post_exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, (const void *) &post_exe_func, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, "postpostpostpost");
+}
+#else
+TEST_F(DataFrameTest, OperatorOverloading_4) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, "");
+}
+#endif
