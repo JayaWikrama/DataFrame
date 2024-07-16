@@ -34,7 +34,6 @@ protected:
     struct testPtr_t testStruct;
 
     void SetUp() override {
-        // tidak ada kebutuhan pre-set
         memset(&testStruct, 0x00, sizeof(testStruct));
     }
 
@@ -801,3 +800,251 @@ TEST_F(DataFrameTest, CustomConstructor_PM5_6) {
     ASSERT_EQ(testStruct.cst, "exepost");
 }
 #endif
+
+/* Test Case untuk Setter dan Getter */
+
+TEST_F(DataFrameTest, SetterAndGetter_1) {
+    std::vector <unsigned char> vec;
+    dataFrame.setType(DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    dataFrame.setSize(2);
+    dataFrame.setReference((const unsigned char *) "\x07\xFF", 2);
+#ifdef __USE_EXE_FUNC
+    dataFrame.setExecuteFunction((const void *) &exe_func, (void *)&testStruct);
+#endif
+#ifdef __USE_POST_FUNC
+    dataFrame.setPostExecuteFunction((const void *) &post_exe_func, (void *)&testStruct);
+#endif
+    dataFrame.execute();
+    ASSERT_EQ(dataFrame.getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame.getSize(), 2);
+    ASSERT_EQ(dataFrame.getReference(vec), 2);
+    ASSERT_EQ(vec.size(), 2);
+    ASSERT_EQ(vec[0], 0x07);
+    ASSERT_EQ(vec[1], 0xFF);
+    ASSERT_EQ(dataFrame.getData(vec), 2);
+    ASSERT_EQ(vec.size(), 2);
+    ASSERT_EQ(vec[0], 0x07);
+    ASSERT_EQ(vec[1], 0xFF);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dataFrame.getReference(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x07\xFF\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dataFrame.getData(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x07\xFF\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(testStruct.type, static_cast<int>(DataFrame::FRAME_TYPE_CONTENT_LENGTH));
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 2);
+    ASSERT_EQ(testStruct.cst, "exepost");
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 1);
+    ASSERT_EQ(testStruct.cst, "exe");
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.cst, "post");
+    ASSERT_EQ(testStruct.step, 2);
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>>\n"));
+    ASSERT_EQ(testStruct.cst, "");
+    ASSERT_EQ(testStruct.step, 0);
+#endif
+}
+
+TEST_F(DataFrameTest, SetterAndGetter_2) {
+    std::vector <unsigned char> vec;
+    dataFrame.setType(DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    dataFrame.setSize(2);
+    dataFrame.setReference((const unsigned char *) "\x07\xFF\x0D\x0A", 4);
+#ifdef __USE_EXE_FUNC
+    dataFrame.setExecuteFunction((const void *) &exe_func, (void *)&testStruct);
+#endif
+#ifdef __USE_POST_FUNC
+    dataFrame.setPostExecuteFunction((const void *) &post_exe_func, (void *)&testStruct);
+#endif
+    dataFrame.execute();
+    ASSERT_EQ(dataFrame.getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame.getSize(), 4);
+    ASSERT_EQ(dataFrame.getReference(vec), 4);
+    ASSERT_EQ(vec.size(), 4);
+    ASSERT_EQ(vec[0], 0x07);
+    ASSERT_EQ(vec[1], 0xFF);
+    ASSERT_EQ(vec[2], 0x0D);
+    ASSERT_EQ(vec[3], 0x0A);
+    ASSERT_EQ(dataFrame.getData(vec), 4);
+    ASSERT_EQ(vec.size(), 4);
+    ASSERT_EQ(vec[0], 0x07);
+    ASSERT_EQ(vec[1], 0xFF);
+    ASSERT_EQ(vec[2], 0x0D);
+    ASSERT_EQ(vec[3], 0x0A);
+    unsigned char buffer[2];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dataFrame.getReference(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x07\xFF", sizeof(buffer)), 0);
+    ASSERT_EQ(dataFrame.getData(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x07\xFF", sizeof(buffer)), 0);
+    ASSERT_EQ(testStruct.type, static_cast<int>(DataFrame::FRAME_TYPE_CONTENT_LENGTH));
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:4]:<<07FF0D0A>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 2);
+    ASSERT_EQ(testStruct.cst, "exepost");
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:4]:<<07FF0D0A>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 1);
+    ASSERT_EQ(testStruct.cst, "exe");
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:4]:<<07FF0D0A>><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.cst, "post");
+    ASSERT_EQ(testStruct.step, 2);
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:4]:<<07FF0D0A>>\n"));
+    ASSERT_EQ(testStruct.cst, "");
+    ASSERT_EQ(testStruct.step, 0);
+#endif
+}
+
+TEST_F(DataFrameTest, SetterAndGetter_3) {
+    std::vector <unsigned char> vec;
+    vec.push_back(0x7F);
+    vec.push_back(0xFF);
+    dataFrame.setType(DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    dataFrame.setSize(2);
+    dataFrame.setReference(vec);
+#ifdef __USE_EXE_FUNC
+    dataFrame.setExecuteFunction((const void *) &exe_func, (void *)&testStruct);
+#endif
+#ifdef __USE_POST_FUNC
+    dataFrame.setPostExecuteFunction((const void *) &post_exe_func, (void *)&testStruct);
+#endif
+    vec.clear();
+    dataFrame.execute();
+    ASSERT_EQ(dataFrame.getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame.getSize(), 2);
+    ASSERT_EQ(dataFrame.getReference(vec), 2);
+    ASSERT_EQ(vec.size(), 2);
+    ASSERT_EQ(vec[0], 0x7F);
+    ASSERT_EQ(vec[1], 0xFF);
+    ASSERT_EQ(dataFrame.getData(vec), 2);
+    ASSERT_EQ(vec.size(), 2);
+    ASSERT_EQ(vec[0], 0x7F);
+    ASSERT_EQ(vec[1], 0xFF);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dataFrame.getReference(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x7F\xFF\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dataFrame.getData(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x7F\xFF\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(testStruct.type, static_cast<int>(DataFrame::FRAME_TYPE_CONTENT_LENGTH));
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 2);
+    ASSERT_EQ(testStruct.cst, "exepost");
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 1);
+    ASSERT_EQ(testStruct.cst, "exe");
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.cst, "post");
+    ASSERT_EQ(testStruct.step, 2);
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>>\n"));
+    ASSERT_EQ(testStruct.cst, "");
+    ASSERT_EQ(testStruct.step, 0);
+#endif
+}
+
+TEST_F(DataFrameTest, SetterAndGetter_4) {
+    std::vector <unsigned char> vec;
+    dataFrame.setType(DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    dataFrame.setSize(2);
+    dataFrame.setData((const unsigned char *) "\x07\xFF", 2);
+#ifdef __USE_EXE_FUNC
+    dataFrame.setExecuteFunction((const void *) &exe_func, (void *)&testStruct);
+#endif
+#ifdef __USE_POST_FUNC
+    dataFrame.setPostExecuteFunction((const void *) &post_exe_func, (void *)&testStruct);
+#endif
+    dataFrame.execute();
+    ASSERT_EQ(dataFrame.getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame.getSize(), 2);
+    ASSERT_EQ(dataFrame.getReference(vec), 0);
+    ASSERT_EQ(vec.size(), 0);
+    ASSERT_EQ(dataFrame.getData(vec), 2);
+    ASSERT_EQ(vec.size(), 2);
+    ASSERT_EQ(vec[0], 0x07);
+    ASSERT_EQ(vec[1], 0xFF);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dataFrame.getReference(buffer, sizeof(buffer)), 0);
+    ASSERT_EQ(memcmp(buffer, "\x00\x00\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dataFrame.getData(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x07\xFF\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(testStruct.type, static_cast<int>(DataFrame::FRAME_TYPE_CONTENT_LENGTH));
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 2);
+    ASSERT_EQ(testStruct.cst, "exepost");
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 1);
+    ASSERT_EQ(testStruct.cst, "exe");
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.cst, "post");
+    ASSERT_EQ(testStruct.step, 2);
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<07FF>>\n"));
+    ASSERT_EQ(testStruct.cst, "");
+    ASSERT_EQ(testStruct.step, 0);
+#endif
+}
+
+TEST_F(DataFrameTest, SetterAndGetter_5) {
+    std::vector <unsigned char> vec;
+    vec.push_back(0x7F);
+    vec.push_back(0xFF);
+    dataFrame.setType(DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    dataFrame.setSize(2);
+    dataFrame.setData(vec);
+#ifdef __USE_EXE_FUNC
+    dataFrame.setExecuteFunction((const void *) &exe_func, (void *)&testStruct);
+#endif
+#ifdef __USE_POST_FUNC
+    dataFrame.setPostExecuteFunction((const void *) &post_exe_func, (void *)&testStruct);
+#endif
+    vec.clear();
+    dataFrame.execute();
+    ASSERT_EQ(dataFrame.getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame.getSize(), 2);
+    ASSERT_EQ(dataFrame.getReference(vec), 0);
+    ASSERT_EQ(vec.size(), 0);
+    ASSERT_EQ(dataFrame.getData(vec), 2);
+    ASSERT_EQ(vec.size(), 2);
+    ASSERT_EQ(vec[0], 0x7F);
+    ASSERT_EQ(vec[1], 0xFF);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dataFrame.getReference(buffer, sizeof(buffer)), 0);
+    ASSERT_EQ(memcmp(buffer, "\x00\x00\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dataFrame.getData(buffer, sizeof(buffer)), 2);
+    ASSERT_EQ(memcmp(buffer, "\x7F\xFF\x00\x00\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(testStruct.type, static_cast<int>(DataFrame::FRAME_TYPE_CONTENT_LENGTH));
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 2);
+    ASSERT_EQ(testStruct.cst, "exepost");
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>><<exeFunc:" + std::to_string((unsigned long long) (const void *) &exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.step, 1);
+    ASSERT_EQ(testStruct.cst, "exe");
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>><<postFunc:" + std::to_string((unsigned long long) (const void *) &post_exe_func) + ">>\n"));
+    ASSERT_EQ(testStruct.cst, "post");
+    ASSERT_EQ(testStruct.step, 2);
+#else
+    ASSERT_EQ(dataFrame.getDataFrameFormat(), std::string("FRAME_TYPE_CONTENT_LENGTH[size:2]:<<7FFF>>\n"));
+    ASSERT_EQ(testStruct.cst, "");
+    ASSERT_EQ(testStruct.step, 0);
+#endif
+}
