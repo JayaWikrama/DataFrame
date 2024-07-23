@@ -200,6 +200,23 @@ void DataFrame::setPostExecuteFunction(const void *_func, void *_param){
   this->postFunc = _func;
   this->postFuncParam = _param;
 }
+
+void DataFrame::setPostExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnly, const void *_func, void *_param){
+  DataFrame *tmp = this;
+  while (tmp != nullptr){
+    if (tmp->type == static_cast<unsigned char>(type)){
+      if (nullptrOnly == true && tmp->postFunc == nullptr){
+        tmp->postFunc = _func;
+        tmp->postFuncParam = _param;
+      }
+      else if (nullptrOnly == false){
+        tmp->postFunc = _func;
+        tmp->postFuncParam = _param;
+      }
+    }
+    tmp = tmp->next;
+  }
+}
 #endif
 
 DataFrame::FRAME_TYPE_t DataFrame::getType(){

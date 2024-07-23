@@ -87,6 +87,7 @@ class DataFrame {
 
 #ifdef __USE_POST_FUNC
     void setPostExecuteFunction(const void *_func, void *_param);
+    void setPostExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnly, const void *_func, void *_param);
 #endif
 
     DataFrame::FRAME_TYPE_t getType();
