@@ -176,6 +176,23 @@ void DataFrame::setExecuteFunction(const void *_func, void *_param){
   this->exeFunc = _func;
   this->exeFuncParam = _param;
 }
+
+void DataFrame::setExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnly, const void *_func, void *_param){
+  DataFrame *tmp = this;
+  while (tmp != nullptr){
+    if (tmp->type == static_cast<unsigned char>(type)){
+      if (nullptrOnly == true && tmp->exeFunc == nullptr){
+        tmp->exeFunc = _func;
+        tmp->exeFuncParam = _param;
+      }
+      else if (nullptrOnly == false){
+        tmp->exeFunc = _func;
+        tmp->exeFuncParam = _param;
+      }
+    }
+    tmp = tmp->next;
+  }
+}
 #endif
 
 #ifdef __USE_POST_FUNC
