@@ -28,6 +28,16 @@ void post_exe_func(DataFrame &obj, void *ptr){
     }
 }
 
+void exe_func_custom(DataFrame &obj, void *ptr){
+    if (ptr != nullptr){
+        struct testPtr_t *sptr = (struct testPtr_t *) ptr;
+        sptr->step = 1;
+        sptr->type = static_cast<int>(obj.getType());
+        sptr->cst += "exe->";
+        sptr->cst += std::to_string(obj.getType());
+    }
+}
+
 class DataFrameTest:public::testing::Test {
 protected:
     DataFrame dataFrame;
@@ -1208,5 +1218,48 @@ TEST_F(DataFrameTest, OperatorOverloading_4) {
     dataFrame.execute();
 #endif
     ASSERT_EQ(testStruct.cst, "");
+}
+#endif
+
+#ifdef __USE_EXE_FUNC
+TEST_F(DataFrameTest, OperatorOverloading_5) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr);
+    dataFrame.setExecuteFunction(DataFrame::FRAME_TYPE_COMMAND, false, (const void *) &exe_func_custom, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, std::string("exe->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND) + 
+                              std::string("exe->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND));
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_6) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr);
+    dataFrame.setExecuteFunction(DataFrame::FRAME_TYPE_COMMAND, true, (const void *) &exe_func_custom, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, std::string("exe->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND) + 
+                              std::string("exe->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND));
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_7) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, (const void *) &exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr);
+    dataFrame.setExecuteFunction(DataFrame::FRAME_TYPE_COMMAND, true, (const void *) &exe_func_custom, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, std::string("exe") +
+                              std::string("exe->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND));
 }
 #endif
