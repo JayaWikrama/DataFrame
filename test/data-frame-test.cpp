@@ -38,6 +38,16 @@ void exe_func_custom(DataFrame &obj, void *ptr){
     }
 }
 
+void post_exe_func_custom(DataFrame &obj, void *ptr){
+    if (ptr != nullptr){
+        struct testPtr_t *sptr = (struct testPtr_t *) ptr;
+        sptr->step = 1;
+        sptr->type = static_cast<int>(obj.getType());
+        sptr->cst += "post->";
+        sptr->cst += std::to_string(obj.getType());
+    }
+}
+
 class DataFrameTest:public::testing::Test {
 protected:
     DataFrame dataFrame;
@@ -1262,4 +1272,47 @@ TEST_F(DataFrameTest, OperatorOverloading_7) {
                               std::string("exe->") +
                               std::to_string(DataFrame::FRAME_TYPE_COMMAND));
 }
+
+#ifdef __USE_EXE_FUNC
+TEST_F(DataFrameTest, OperatorOverloading_8) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr, nullptr, nullptr);
+    dataFrame.setPostExecuteFunction(DataFrame::FRAME_TYPE_COMMAND, false, (const void *) &post_exe_func_custom, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, std::string("post->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND) + 
+                              std::string("post->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND));
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_9) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr, nullptr, nullptr);
+    dataFrame.setPostExecuteFunction(DataFrame::FRAME_TYPE_COMMAND, true, (const void *) &post_exe_func_custom, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, std::string("post->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND) + 
+                              std::string("post->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND));
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_10) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr, (const void *) &post_exe_func, &testStruct) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, 0, nullptr, nullptr, nullptr, nullptr, nullptr) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 0, nullptr, nullptr, nullptr, nullptr, nullptr);
+    dataFrame.setPostExecuteFunction(DataFrame::FRAME_TYPE_COMMAND, true, (const void *) &post_exe_func_custom, &testStruct);
+    dataFrame.execute();
+    ASSERT_EQ(testStruct.cst, std::string("post") +
+                              std::string("post->") +
+                              std::to_string(DataFrame::FRAME_TYPE_COMMAND));
+}
+#endif
 #endif
