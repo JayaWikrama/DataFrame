@@ -104,6 +104,8 @@ class DataFrame {
 
     std::string getDataFrameFormat();
 
+    DataFrame *getNext();
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     void execute();
 #endif

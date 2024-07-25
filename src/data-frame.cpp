@@ -281,6 +281,10 @@ std::string DataFrame::getDataFrameFormat(){
   return result;
 }
 
+DataFrame *DataFrame::getNext(){
+  return this->next;
+}
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
 void DataFrame::execute(){
   DataFrame *tmp = this;
