@@ -83,6 +83,8 @@ class DataFrame {
 #ifdef __USE_EXE_FUNC
     void setExecuteFunction(const void *_func, void *_param);
     void setExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnly, const void *_func, void *_param);
+    const void *getExeFunc();
+    void *getExeFuncParam();
 #endif
 
 #ifdef __USE_POST_FUNC

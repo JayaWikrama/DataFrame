@@ -193,6 +193,14 @@ void DataFrame::setExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnl
     tmp = tmp->next;
   }
 }
+
+const void *DataFrame::getExeFunc(){
+  return this->exeFunc;
+}
+
+void *DataFrame::getExeFuncParam(){
+  return this->exeFuncParam;
+}
 #endif
 
 #ifdef __USE_POST_FUNC
