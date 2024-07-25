@@ -194,11 +194,11 @@ void DataFrame::setExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnl
   }
 }
 
-const void *DataFrame::getExeFunc(){
+const void *DataFrame::getExecuteFunction(){
   return this->exeFunc;
 }
 
-void *DataFrame::getExeFuncParam(){
+void *DataFrame::getExecuteFunctionParam(){
   return this->exeFuncParam;
 }
 #endif
@@ -224,6 +224,14 @@ void DataFrame::setPostExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullpt
     }
     tmp = tmp->next;
   }
+}
+
+const void *DataFrame::getPostExecuteFunction(){
+  return this->postFunc;
+}
+
+void *DataFrame::getPostExecuteFunctionParam(){
+  return this->postFuncParam;
 }
 #endif
 
