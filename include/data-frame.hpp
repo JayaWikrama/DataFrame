@@ -110,6 +110,10 @@ class DataFrame {
 
     DataFrame *getNext();
 
+    size_t getAllData(unsigned char *data, size_t sizeOfData);
+
+    size_t getAllData(std::vector<unsigned char> &data);
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     void execute();
 #endif

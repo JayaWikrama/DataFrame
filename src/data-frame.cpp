@@ -301,6 +301,24 @@ DataFrame *DataFrame::getNext(){
   return this->next;
 }
 
+size_t DataFrame::getAllData(unsigned char *data, size_t sizeOfData){
+  std::vector<unsigned char> dataTmp;
+  size_t sz = this->getAllData(dataTmp);
+  if (sizeOfData < sz) sz = sizeOfData;
+  memcpy(data, dataTmp.data(), sz);
+  return sz;
+}
+
+size_t DataFrame::getAllData(std::vector<unsigned char> &data){
+  data.clear();
+  const DataFrame *tmp = this;
+  while (tmp != nullptr){
+    data.insert(data.end(), tmp->data.begin(), tmp->data.end());
+    tmp = tmp->next;
+  }
+  return data.size();
+}
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
 void DataFrame::execute(){
   DataFrame *tmp = this;
