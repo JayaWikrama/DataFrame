@@ -354,3 +354,16 @@ DataFrame& DataFrame::operator+(const DataFrame &obj){
   *this += obj;
   return *this;
 }
+
+DataFrame* DataFrame::operator[](int index){
+  if (index < 0) return nullptr;
+  if (index == 0) return this;
+  DataFrame *tmp = this->next;
+  int idx = 1;
+  while (tmp != nullptr){
+    if (idx == index) return tmp;
+    tmp = tmp->next;
+    idx++;
+  }
+  return nullptr;
+}

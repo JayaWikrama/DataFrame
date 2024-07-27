@@ -117,6 +117,9 @@ class DataFrame {
     DataFrame& operator+=(const DataFrame &obj);
 
     DataFrame& operator+(const DataFrame &obj);
+
+    DataFrame* operator[](int index);
+
 };
 
 #endif
