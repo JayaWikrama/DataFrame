@@ -1316,3 +1316,19 @@ TEST_F(DataFrameTest, OperatorOverloading_10) {
 }
 #endif
 #endif
+
+TEST_F(DataFrameTest, OperatorOverloading_11) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES);
+    ASSERT_EQ(dataFrame[0]->getType(), DataFrame::FRAME_TYPE_START_BYTES);
+    ASSERT_EQ(dataFrame[1]->getType(), DataFrame::FRAME_TYPE_COMMAND);
+    ASSERT_EQ(dataFrame[2]->getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame[3]->getType(), DataFrame::FRAME_TYPE_COMMAND);
+    ASSERT_EQ(dataFrame[4]->getType(), DataFrame::FRAME_TYPE_VALIDATOR);
+    ASSERT_EQ(dataFrame[5]->getType(), DataFrame::FRAME_TYPE_STOP_BYTES);
+    ASSERT_EQ(dataFrame[-1], nullptr);
+    ASSERT_EQ(dataFrame[6], nullptr);
+}
