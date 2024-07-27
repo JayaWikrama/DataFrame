@@ -1,6 +1,7 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <sys/time.h>
+#include <iostream>
 
 #include "data-frame.hpp"
 
@@ -1087,6 +1088,34 @@ TEST_F(DataFrameTest, SetterAndGetter_5) {
     ASSERT_EQ(testStruct.cst, "");
     ASSERT_EQ(testStruct.step, 0);
 #endif
+}
+
+TEST_F(DataFrameTest, SetterAndGetter_6) {
+    dataFrame.setData((const unsigned char *) "1234", 4);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 4, (const unsigned char *) "5678") +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 5, (const unsigned char *) "QW\r\n\x00");
+    std::vector <unsigned char> tmp;
+    dataFrame.getAllData(tmp);
+    ASSERT_EQ(memcmp(tmp.data(), (const unsigned char *) "12345678QW\r\n\x00", 9), 0);
+}
+
+
+TEST_F(DataFrameTest, SetterAndGetter_7) {
+    dataFrame.setData((const unsigned char *) "1234", 4);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 4, (const unsigned char *) "5678") +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 5, (const unsigned char *) "QW\r\n\x00");
+    unsigned char data[9];
+    ASSERT_EQ(dataFrame.getAllData(data, sizeof(data)), 9);
+    ASSERT_EQ(memcmp(data, (const unsigned char *) "12345678QW\r\n\x00", 9), 0);
+}
+
+TEST_F(DataFrameTest, SetterAndGetter_8) {
+    dataFrame.setData((const unsigned char *) "1234", 4);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, 4, (const unsigned char *) "5678") +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, 5, (const unsigned char *) "QW\r\n\x00");
+    unsigned char data[5];
+    ASSERT_EQ(dataFrame.getAllData(data, sizeof(data)), 5);
+    ASSERT_EQ(memcmp(data, (const unsigned char *) "12345", 5), 0);
 }
 
 /* Test Operator Overloading */
