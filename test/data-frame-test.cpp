@@ -338,6 +338,74 @@ TEST_F(DataFrameTest, CustomConstructor_PM2_6) {
 #endif
 }
 
+TEST_F(DataFrameTest, CustomConstructor_PM2_7) {
+    std::vector <unsigned char> tmp(4);
+    tmp[0] = static_cast<unsigned char>(0x0d);
+    tmp[1] = static_cast<unsigned char>(0x0a);
+    tmp[2] = static_cast<unsigned char>(0x0d);
+    tmp[3] = static_cast<unsigned char>(0x0a);
+    DataFrame dFrame(DataFrame::FRAME_TYPE_START_BYTES, tmp);
+    ASSERT_EQ(dFrame.getType(), DataFrame::FRAME_TYPE_START_BYTES);
+    ASSERT_EQ(dFrame.getSize(), 4);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dFrame.getReference(buffer, sizeof(buffer)), 4);
+    ASSERT_EQ(memcmp(buffer, "\x0d\x0a\x0d\x0a\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dFrame.getData(buffer, sizeof(buffer)), 4);
+    ASSERT_EQ(memcmp(buffer, "\x0d\x0a\x0d\x0a\x00\x00\x00\x00", sizeof(buffer)), 0);
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<exeFunc:0>><<postFunc:0>>\n"));
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<exeFunc:0>>\n"));
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<postFunc:0>>\n"));
+#else
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>>\n"));
+#endif
+}
+
+TEST_F(DataFrameTest, CustomConstructor_PM2_8) {
+    DataFrame dFrame(DataFrame::FRAME_TYPE_START_BYTES, "\x0d\x0a\x0d\x0a");
+    ASSERT_EQ(dFrame.getType(), DataFrame::FRAME_TYPE_START_BYTES);
+    ASSERT_EQ(dFrame.getSize(), 4);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dFrame.getReference(buffer, sizeof(buffer)), 4);
+    ASSERT_EQ(memcmp(buffer, "\x0d\x0a\x0d\x0a\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dFrame.getData(buffer, sizeof(buffer)), 4);
+    ASSERT_EQ(memcmp(buffer, "\x0d\x0a\x0d\x0a\x00\x00\x00\x00", sizeof(buffer)), 0);
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<exeFunc:0>><<postFunc:0>>\n"));
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<exeFunc:0>>\n"));
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<postFunc:0>>\n"));
+#else
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>>\n"));
+#endif
+}
+
+TEST_F(DataFrameTest, CustomConstructor_PM2_9) {
+    DataFrame dFrame(DataFrame::FRAME_TYPE_START_BYTES, std::string("\x0d\x0a\x0d\x0a"));
+    ASSERT_EQ(dFrame.getType(), DataFrame::FRAME_TYPE_START_BYTES);
+    ASSERT_EQ(dFrame.getSize(), 4);
+    unsigned char buffer[8];
+    memset(buffer, 0x00, sizeof(buffer));
+    ASSERT_EQ(dFrame.getReference(buffer, sizeof(buffer)), 4);
+    ASSERT_EQ(memcmp(buffer, "\x0d\x0a\x0d\x0a\x00\x00\x00\x00", sizeof(buffer)), 0);
+    ASSERT_EQ(dFrame.getData(buffer, sizeof(buffer)), 4);
+    ASSERT_EQ(memcmp(buffer, "\x0d\x0a\x0d\x0a\x00\x00\x00\x00", sizeof(buffer)), 0);
+#if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<exeFunc:0>><<postFunc:0>>\n"));
+#elif defined(__USE_EXE_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<exeFunc:0>>\n"));
+#elif defined(__USE_POST_FUNC)
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>><<postFunc:0>>\n"));
+#else
+    ASSERT_EQ(dFrame.getDataFrameFormat(), std::string("FRAME_TYPE_START_BYTES[size:4]:<<0D0A0D0A>>\n"));
+#endif
+}
+
 TEST_F(DataFrameTest, CustomConstructor_PM3_1) {
     DataFrame dFrame(DataFrame::FRAME_TYPE_START_BYTES, 4, (const unsigned char *) "\x0d\x0a\x0d\x0a");
     ASSERT_EQ(dFrame.getType(), DataFrame::FRAME_TYPE_START_BYTES);
