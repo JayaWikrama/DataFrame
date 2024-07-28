@@ -147,6 +147,10 @@ class DataFrame {
 
     void setData(const std::vector<unsigned char> data);
 
+    void setData(const char *data);
+
+    void setData(const std::string data);
+
 #ifdef __USE_EXE_FUNC
     void setExecuteFunction(const void *_func, void *_param);
     void setExecuteFunction(DataFrame::FRAME_TYPE_t type, bool nullptrOnly, const void *_func, void *_param);

@@ -375,6 +375,18 @@ void DataFrame::setData(const std::vector<unsigned char> data){
   this->sz = this->data.size();
 }
 
+void DataFrame::setData(const char *data){
+  this->isReference = false;
+  this->data.assign((const unsigned char *) data, (const unsigned char *) data + strlen(data));
+  this->sz = this->data.size();
+}
+
+void DataFrame::setData(const std::string data){
+  this->isReference = false;
+  this->data.assign((const unsigned char *) data.c_str(), (const unsigned char *) data.c_str() + data.length());
+  this->sz = this->data.size();
+}
+
 #ifdef __USE_EXE_FUNC
 void DataFrame::setExecuteFunction(const void *_func, void *_param){
   this->exeFunc = _func;
