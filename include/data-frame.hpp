@@ -102,6 +102,30 @@ class DataFrame {
               const void *postFunc,
               void *postFuncParam
               );
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const std::vector <unsigned char> data,
+              const void *exeFunc,
+              void *exeFuncParam,
+              const void *postFunc,
+              void *postFuncParam
+              );
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const char *data,
+              const void *exeFunc,
+              void *exeFuncParam,
+              const void *postFunc,
+              void *postFuncParam
+              );
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const std::string data,
+              const void *exeFunc,
+              void *exeFuncParam,
+              const void *postFunc,
+              void *postFuncParam
+              );
 #endif
 #endif
 

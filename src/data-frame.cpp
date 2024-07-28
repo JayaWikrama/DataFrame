@@ -268,6 +268,60 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
   this->postFuncParam = postFuncParam;
   this->next = nullptr;
 }
+
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
+                     const std::vector <unsigned char> data,
+                     const void *exeFunc,
+                     void *exeFuncParam,
+                     const void *postFunc,
+                     void *postFuncParam){
+  this->type = static_cast<unsigned char>(type);
+  if (data.size() > 0) this->isReference = true;
+  else this->isReference = false;
+  this->sz = data.size();
+  if (data.size() > 0) this->data.assign(data.begin(), data.end());
+  this->exeFunc = exeFunc;
+  this->exeFuncParam = exeFuncParam;
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+  this->next = nullptr;
+}
+
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
+                     const char *data,
+                     const void *exeFunc,
+                     void *exeFuncParam,
+                     const void *postFunc,
+                     void *postFuncParam){
+  this->type = static_cast<unsigned char>(type);
+  if (data != nullptr) this->isReference = true;
+  else this->isReference = false;
+  this->sz = strlen(data);
+  if (data != nullptr) this->data.assign((const unsigned char *) data, (const unsigned char *) data + this->sz);
+  this->exeFunc = exeFunc;
+  this->exeFuncParam = exeFuncParam;
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+  this->next = nullptr;
+}
+
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
+                     const std::string data,
+                     const void *exeFunc,
+                     void *exeFuncParam,
+                     const void *postFunc,
+                     void *postFuncParam){
+  this->type = static_cast<unsigned char>(type);
+  if (data.length() > 0) this->isReference = true;
+  else this->isReference = false;
+  this->sz = data.length();
+  if (data.length() > 0) this->data.assign(data.c_str(), data.c_str() + this->sz);
+  this->exeFunc = exeFunc;
+  this->exeFuncParam = exeFuncParam;
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+  this->next = nullptr;
+}
 #endif
 
 DataFrame::~DataFrame(){
