@@ -139,6 +139,10 @@ class DataFrame {
 
     void setReference(const std::vector<unsigned char> reference);
 
+    void setReference(const char *reference);
+
+    void setReference(const std::string reference);
+
     void setData(const unsigned char *data, size_t sz);
 
     void setData(const std::vector<unsigned char> data);
