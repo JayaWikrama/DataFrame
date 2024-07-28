@@ -40,6 +40,15 @@ class DataFrame {
               size_t sz,
               const unsigned char *data);
 
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const std::vector <unsigned char> data);
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const char *data);
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const std::string data);
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     DataFrame(DataFrame::FRAME_TYPE_t type,
               size_t sz,
