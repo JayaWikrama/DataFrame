@@ -160,6 +160,93 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 #endif
   this->next = nullptr;
 }
+
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
+                     const std::vector <unsigned char> data,
+#ifdef __USE_EXE_FUNC
+                     const void *exeFunc,
+                     void *exeFuncParam
+#else
+                     const void *postFunc,
+                     void *postFuncParam
+#endif
+){
+  this->type = static_cast<unsigned char>(type);
+  if (data.size() > 0) this->isReference = true;
+  else this->isReference = false;
+  this->sz = data.size();
+  if (data.size() > 0) this->data.assign(data.begin(), data.end());
+#ifdef __USE_EXE_FUNC
+  this->exeFunc = exeFunc;
+  this->exeFuncParam = exeFuncParam;
+#ifdef __USE_POST_FUNC
+  this->postFunc = nullptr;
+  this->postFuncParam = nullptr;
+#endif
+#else
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+#endif
+  this->next = nullptr;
+}
+
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
+                     const char *data,
+#ifdef __USE_EXE_FUNC
+                     const void *exeFunc,
+                     void *exeFuncParam
+#else
+                     const void *postFunc,
+                     void *postFuncParam
+#endif
+){
+  this->type = static_cast<unsigned char>(type);
+  if (data != nullptr) this->isReference = true;
+  else this->isReference = false;
+  this->sz = strlen(data);
+  if (data != nullptr) this->data.assign((const unsigned char *) data, (const unsigned char *) data + sz);
+#ifdef __USE_EXE_FUNC
+  this->exeFunc = exeFunc;
+  this->exeFuncParam = exeFuncParam;
+#ifdef __USE_POST_FUNC
+  this->postFunc = nullptr;
+  this->postFuncParam = nullptr;
+#endif
+#else
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+#endif
+  this->next = nullptr;
+}
+
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
+                     const std::string data,
+#ifdef __USE_EXE_FUNC
+                     const void *exeFunc,
+                     void *exeFuncParam
+#else
+                     const void *postFunc,
+                     void *postFuncParam
+#endif
+){
+  this->type = static_cast<unsigned char>(type);
+  if (data.length() > 0) this->isReference = true;
+  else this->isReference = false;
+  this->sz = data.length();
+  if (data.length() > 0) this->data.assign(data.c_str(), data.c_str() + this->sz);
+#ifdef __USE_EXE_FUNC
+  this->exeFunc = exeFunc;
+  this->exeFuncParam = exeFuncParam;
+#ifdef __USE_POST_FUNC
+  this->postFunc = nullptr;
+  this->postFuncParam = nullptr;
+#endif
+#else
+  this->postFunc = postFunc;
+  this->postFuncParam = postFuncParam;
+#endif
+  this->next = nullptr;
+}
 #endif
 
 #if defined(__USE_EXE_FUNC) && defined(__USE_POST_FUNC)

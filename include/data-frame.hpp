@@ -60,6 +60,36 @@ class DataFrame {
               const void *postFunc,
               void *postFuncParam);
 #endif
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const std::vector <unsigned char> data,
+#ifdef __USE_EXE_FUNC
+              const void *exeFunc,
+              void *exeFuncParam);
+#else
+              const void *postFunc,
+              void *postFuncParam);
+#endif
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const char *data,
+#ifdef __USE_EXE_FUNC
+              const void *exeFunc,
+              void *exeFuncParam);
+#else
+              const void *postFunc,
+              void *postFuncParam);
+#endif
+
+    DataFrame(DataFrame::FRAME_TYPE_t type,
+              const std::string data,
+#ifdef __USE_EXE_FUNC
+              const void *exeFunc,
+              void *exeFuncParam);
+#else
+              const void *postFunc,
+              void *postFuncParam);
+#endif
 #endif
 
 #ifdef __USE_EXE_FUNC
