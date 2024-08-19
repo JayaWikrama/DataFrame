@@ -1580,6 +1580,12 @@ TEST_F(DataFrameTest, SetterAndGetter_12) {
 #endif
 }
 
+TEST_F(DataFrameTest, SetterAndGetter_13) {
+    std::vector <unsigned char> vec;
+    ASSERT_EQ(dataFrame.setSize(0x7FFFFFFF), true);
+    ASSERT_EQ(dataFrame.setSize(-1), false);
+}
+
 /* Test Operator Overloading */
 
 TEST_F(DataFrameTest, OperatorOverloading_1) {
