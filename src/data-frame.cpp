@@ -335,8 +335,10 @@ void DataFrame::setType(DataFrame::FRAME_TYPE_t type){
   this->type = static_cast<unsigned char>(type);
 }
 
-void DataFrame::setSize(size_t sz){
+bool DataFrame::setSize(size_t sz){
+  if (sz > 0x7FFFFFFF) return false;
   this->sz = sz;
+  return true;
 }
 
 void DataFrame::setReference(const unsigned char *reference, size_t sz){

@@ -133,7 +133,7 @@ class DataFrame {
 
     void setType(DataFrame::FRAME_TYPE_t type);
 
-    void setSize(size_t sz);
+    bool setSize(size_t sz);
 
     void setReference(const unsigned char *reference, size_t sz);
 
