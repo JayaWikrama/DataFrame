@@ -177,6 +177,8 @@ class DataFrame {
 
     size_t getData(std::vector<unsigned char> &data);
 
+    std::vector <unsigned char> getDataAsVector();
+
     std::string getDataFrameFormat();
 
     DataFrame *getNext();
@@ -184,6 +186,10 @@ class DataFrame {
     size_t getAllData(unsigned char *data, size_t sizeOfData);
 
     size_t getAllData(std::vector<unsigned char> &data);
+
+    std::vector <unsigned char> getAllDataAsVector();
+
+    std::vector <unsigned char> getSpecificDataAsVector(const DataFrame *begin, const DataFrame *end);
 
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     void execute();

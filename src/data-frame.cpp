@@ -491,6 +491,12 @@ size_t DataFrame::getData(std::vector<unsigned char> &data){
   return this->data.size();
 }
 
+std::vector <unsigned char> DataFrame::getDataAsVector(){
+  std::vector <unsigned char> tmp;
+  tmp.assign(this->data.begin(), this->data.end());
+  return tmp;
+}
+
 std::string DataFrame::getDataFrameFormat(){
   std::string result = "";
   static char dthex[3];
@@ -535,6 +541,26 @@ size_t DataFrame::getAllData(std::vector<unsigned char> &data){
     tmp = tmp->next;
   }
   return data.size();
+}
+
+std::vector <unsigned char> DataFrame::getAllDataAsVector(){
+  std::vector <unsigned char> tmp;
+  this->getAllData(tmp);
+  return tmp;
+}
+
+std::vector <unsigned char> DataFrame::getSpecificDataAsVector(const DataFrame *begin, const DataFrame *end){
+  std::vector <unsigned char> data;
+  const DataFrame *tmp = this;
+  while(tmp != begin && tmp != nullptr){
+    tmp = tmp->next;
+  }
+  while (tmp != nullptr){
+    data.insert(data.end(), tmp->data.begin(), tmp->data.end());
+    if (tmp == end) break;
+    tmp = tmp->next;
+  }
+  return data;
 }
 
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
