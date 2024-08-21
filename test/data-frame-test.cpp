@@ -1586,6 +1586,35 @@ TEST_F(DataFrameTest, SetterAndGetter_13) {
     ASSERT_EQ(dataFrame.setSize(-1), false);
 }
 
+TEST_F(DataFrameTest, SetterAndGetter_14) {
+    std::vector <unsigned char> vec;
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND, "123") +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH, "456") +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND, "789") +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "0-=") +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES, "qwerty");
+    vec = dataFrame[1]->getDataAsVector();
+    ASSERT_EQ(vec.size(), 3);
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "123", 3), 0);
+    vec = dataFrame[2]->getDataAsVector();
+    ASSERT_EQ(vec.size(), 3);
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "456", 3), 0);
+    vec = dataFrame[3]->getDataAsVector();
+    ASSERT_EQ(vec.size(), 3);
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "789", 3), 0);
+    vec = dataFrame[4]->getDataAsVector();
+    ASSERT_EQ(vec.size(), 3);
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "0-=", 3), 0);
+    vec = dataFrame[5]->getDataAsVector();
+    ASSERT_EQ(vec.size(), 6);
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "qwerty", 6), 0);
+    DataFrame *begin = dataFrame[2];
+    DataFrame *end = dataFrame[4];
+    vec = dataFrame.getSpecificDataAsVector(begin, end);
+    ASSERT_EQ(vec.size(), 9);
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "4567890-=", 9), 0);
+}
+
 /* Test Operator Overloading */
 
 TEST_F(DataFrameTest, OperatorOverloading_1) {
