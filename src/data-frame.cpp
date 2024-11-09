@@ -641,3 +641,26 @@ DataFrame* DataFrame::operator[](int index){
   }
   return nullptr;
 }
+
+DataFrame* DataFrame::operator[](DataFrame::FRAME_TYPE_t type){
+  DataFrame *tmp = this;
+  while(tmp != nullptr){
+    if(tmp->getType() == type) return tmp;
+    tmp = tmp->getNext();
+  }
+  return nullptr;
+}
+
+DataFrame* DataFrame::operator[](std::pair <DataFrame::FRAME_TYPE_t, int> params){
+  int i = 0;
+  DataFrame *tmp = this;
+  if (i < 0) return nullptr;
+  while(tmp != nullptr){
+    if (tmp->getType() == params.first){
+      if(i == params.second) return tmp;
+      i++;
+    }
+    tmp = tmp->getNext();
+  }
+  return nullptr;
+}

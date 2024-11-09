@@ -213,6 +213,10 @@ class DataFrame {
 
     DataFrame* operator[](int index);
 
+    DataFrame* operator[](DataFrame::FRAME_TYPE_t type);
+
+    DataFrame* operator[](std::pair <DataFrame::FRAME_TYPE_t, int> params);
+
 };
 
 #endif
