@@ -1858,3 +1858,60 @@ TEST_F(DataFrameTest, OperatorOverloading_11) {
     ASSERT_EQ(dataFrame[-1], nullptr);
     ASSERT_EQ(dataFrame[6], nullptr);
 }
+
+TEST_F(DataFrameTest, OperatorOverloading_12) {
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_COMMAND) +
+                 DataFrame(DataFrame::FRAME_TYPE_CONTENT_LENGTH) +
+                 DataFrame(DataFrame::FRAME_TYPE_COMMAND) +
+                 DataFrame(DataFrame::FRAME_TYPE_VALIDATOR) +
+                 DataFrame(DataFrame::FRAME_TYPE_STOP_BYTES);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_START_BYTES]->getType(), DataFrame::FRAME_TYPE_START_BYTES);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_COMMAND]->getType(), DataFrame::FRAME_TYPE_COMMAND);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_CONTENT_LENGTH]->getType(), DataFrame::FRAME_TYPE_CONTENT_LENGTH);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_VALIDATOR]->getType(), DataFrame::FRAME_TYPE_VALIDATOR);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_STOP_BYTES]->getType(), DataFrame::FRAME_TYPE_STOP_BYTES);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_SN], nullptr);
+    ASSERT_EQ(dataFrame[DataFrame::FRAME_TYPE_RFU], nullptr);
+}
+
+TEST_F(DataFrameTest, OperatorOverloading_13) {
+    DataFrame cmdBytes0(DataFrame::FRAME_TYPE_COMMAND, 1);
+    DataFrame dataBytes0(DataFrame::FRAME_TYPE_DATA, 1);
+    DataFrame cmdBytes1(DataFrame::FRAME_TYPE_COMMAND, 2);
+    DataFrame dataBytes1(DataFrame::FRAME_TYPE_DATA, 2);
+    DataFrame cmdBytes2(DataFrame::FRAME_TYPE_COMMAND, 3);
+    DataFrame dataBytes2(DataFrame::FRAME_TYPE_DATA, 3);
+    DataFrame stopBytes(DataFrame::FRAME_TYPE_STOP_BYTES, "90-=");
+    dataFrame += cmdBytes0 + dataBytes0 + cmdBytes1 + dataBytes1 + cmdBytes2 + dataBytes2 + stopBytes;
+    DataFrame *frame = nullptr;
+    frame = dataFrame[{DataFrame::FRAME_TYPE_COMMAND, 0}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_COMMAND);
+    ASSERT_EQ(frame->getSize(), 1);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_DATA, 0}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(frame->getSize(), 1);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_COMMAND, 1}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_COMMAND);
+    ASSERT_EQ(frame->getSize(), 2);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_DATA, 1}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(frame->getSize(), 2);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_COMMAND, 2}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_COMMAND);
+    ASSERT_EQ(frame->getSize(), 3);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_DATA, 2}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(frame->getSize(), 3);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_STOP_BYTES}];
+    ASSERT_NE(frame, nullptr);
+    ASSERT_EQ(frame->getType(), DataFrame::FRAME_TYPE_STOP_BYTES);
+    ASSERT_EQ(frame->getSize(), 4);
+    frame = dataFrame[{DataFrame::FRAME_TYPE_VALIDATOR}];
+    ASSERT_EQ(frame, nullptr);
+}
