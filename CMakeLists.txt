@@ -65,13 +65,25 @@ add_library(${PROJECT_NAME}-lib SHARED
   ${SOURCE_FILES}
 )
 
+add_library(${PROJECT_NAME}-ar STATIC
+  ${SOURCE_FILES}
+)
+
 # Set library output name
 set_target_properties(${PROJECT_NAME}-lib PROPERTIES
   OUTPUT_NAME ${PROJECT_NAME}
 )
 
+set_target_properties(${PROJECT_NAME}-ar PROPERTIES
+  OUTPUT_NAME ${PROJECT_NAME}
+)
+
 # Skip creating symbolic links
 set_target_properties(${PROJECT_NAME}-lib PROPERTIES
+  SKIP_BUILD_RPATH 1
+)
+
+set_target_properties(${PROJECT_NAME}-ar PROPERTIES
   SKIP_BUILD_RPATH 1
 )
 
@@ -89,6 +101,12 @@ target_include_directories(${PROJECT_NAME}-lib PUBLIC
   ${SQLITE3_INCLUDE_DIRS}
   ${OPENCV_INCLUDE_DIRS}
   ${ZBAR_INCLUDE_DIRS}
+)
+
+target_include_directories(${PROJECT_NAME}-ar PUBLIC
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
+  $<INSTALL_INTERFACE:include>
 )
 
 #include_directories(${PROJECT_NAME}-test PUBLIC ${GTEST_INCLUDE_DIRS})
