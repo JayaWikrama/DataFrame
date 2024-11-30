@@ -91,7 +91,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
   this->next = nullptr;
 }
 
-DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type, const std::vector <unsigned char> data){
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type, const std::vector <unsigned char> &data){
   this->type = static_cast<unsigned char>(type);
   if (data.size() > 0) this->isReference = true;
   else this->isReference = false;
@@ -125,7 +125,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type, const char *data){
   this->next = nullptr;
 }
 
-DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type, const std::string data){
+DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type, const std::string &data){
   this->type = static_cast<unsigned char>(type);
   if (data.length() > 0) this->isReference = true;
   else this->isReference = false;
@@ -174,7 +174,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 }
 
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
-                     const std::vector <unsigned char> data,
+                     const std::vector <unsigned char> &data,
 #ifdef __USE_EXE_FUNC
                      const void *exeFunc,
                      void *exeFuncParam
@@ -232,7 +232,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 }
 
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
-                     const std::string data,
+                     const std::string &data,
 #ifdef __USE_EXE_FUNC
                      const void *exeFunc,
                      void *exeFuncParam
@@ -282,7 +282,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 }
 
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
-                     const std::vector <unsigned char> data,
+                     const std::vector <unsigned char> &data,
                      const void *exeFunc,
                      void *exeFuncParam,
                      const void *postFunc,
@@ -318,7 +318,7 @@ DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
 }
 
 DataFrame::DataFrame(DataFrame::FRAME_TYPE_t type,
-                     const std::string data,
+                     const std::string &data,
                      const void *exeFunc,
                      void *exeFuncParam,
                      const void *postFunc,
@@ -359,7 +359,7 @@ void DataFrame::setReference(const unsigned char *reference, size_t sz){
   this->sz = sz;
 }
 
-void DataFrame::setReference(const std::vector<unsigned char> reference){
+void DataFrame::setReference(const std::vector<unsigned char> &reference){
   this->isReference = true;
   this->data.assign(reference.begin(), reference.end());
   this->sz = this->data.size();
@@ -371,7 +371,7 @@ void DataFrame::setReference(const char *reference){
   this->sz = this->data.size();
 }
 
-void DataFrame::setReference(const std::string reference){
+void DataFrame::setReference(const std::string &reference){
   this->isReference = true;
   this->data.assign(reference.c_str(), reference.c_str() + reference.length());
   this->sz = this->data.size();
@@ -383,7 +383,7 @@ void DataFrame::setData(const unsigned char *data, size_t sz){
   this->sz = sz;
 }
 
-void DataFrame::setData(const std::vector<unsigned char> data){
+void DataFrame::setData(const std::vector<unsigned char> &data){
   this->isReference = false;
   this->data.assign(data.begin(), data.end());
   this->sz = this->data.size();
@@ -395,7 +395,7 @@ void DataFrame::setData(const char *data){
   this->sz = this->data.size();
 }
 
-void DataFrame::setData(const std::string data){
+void DataFrame::setData(const std::string &data){
   this->isReference = false;
   this->data.assign((const unsigned char *) data.c_str(), (const unsigned char *) data.c_str() + data.length());
   this->sz = this->data.size();

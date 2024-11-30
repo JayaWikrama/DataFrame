@@ -54,13 +54,13 @@ class DataFrame {
               const unsigned char *data);
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
-              const std::vector <unsigned char> data);
+              const std::vector <unsigned char> &data);
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
               const char *data);
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
-              const std::string data);
+              const std::string &data);
 
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     DataFrame(DataFrame::FRAME_TYPE_t type,
@@ -75,7 +75,7 @@ class DataFrame {
 #endif
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
-              const std::vector <unsigned char> data,
+              const std::vector <unsigned char> &data,
 #ifdef __USE_EXE_FUNC
               const void *exeFunc,
               void *exeFuncParam);
@@ -95,7 +95,7 @@ class DataFrame {
 #endif
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
-              const std::string data,
+              const std::string &data,
 #ifdef __USE_EXE_FUNC
               const void *exeFunc,
               void *exeFuncParam);
@@ -117,7 +117,7 @@ class DataFrame {
               );
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
-              const std::vector <unsigned char> data,
+              const std::vector <unsigned char> &data,
               const void *exeFunc,
               void *exeFuncParam,
               const void *postFunc,
@@ -133,7 +133,7 @@ class DataFrame {
               );
 
     DataFrame(DataFrame::FRAME_TYPE_t type,
-              const std::string data,
+              const std::string &data,
               const void *exeFunc,
               void *exeFuncParam,
               const void *postFunc,
@@ -150,19 +150,19 @@ class DataFrame {
 
     void setReference(const unsigned char *reference, size_t sz);
 
-    void setReference(const std::vector<unsigned char> reference);
+    void setReference(const std::vector<unsigned char> &reference);
 
     void setReference(const char *reference);
 
-    void setReference(const std::string reference);
+    void setReference(const std::string &reference);
 
     void setData(const unsigned char *data, size_t sz);
 
-    void setData(const std::vector<unsigned char> data);
+    void setData(const std::vector<unsigned char> &data);
 
     void setData(const char *data);
 
-    void setData(const std::string data);
+    void setData(const std::string &data);
 
 #ifdef __USE_EXE_FUNC
     void setExecuteFunction(const void *_func, void *_param);
