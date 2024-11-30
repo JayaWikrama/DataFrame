@@ -210,6 +210,10 @@ class DataFrame {
 
     bool parse(const char *data);
 
+    bool parse(const std::vector <unsigned char> &data);
+
+    bool parse(const std::string &data);
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     void execute();
 #endif

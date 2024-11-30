@@ -658,6 +658,14 @@ bool DataFrame::parse(const char *data){
   return this->parse((const unsigned char *) data, strlen(data));
 }
 
+bool DataFrame::parse(const std::vector <unsigned char> &data){
+  return this->parse(data.data(), data.size());
+}
+
+bool DataFrame::parse(const std::string &data){
+  return this->parse((const unsigned char *) data.c_str(), data.length());
+}
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
 void DataFrame::execute(){
   DataFrame *tmp = this;
