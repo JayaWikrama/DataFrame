@@ -49,6 +49,56 @@ void post_exe_func_custom(DataFrame &obj, void *ptr){
     }
 }
 
+void crc16(DataFrame &frame, void *ptr) {
+    /* Get object form function param */
+    DataFrame *obj = (DataFrame *) ptr;
+    /* Initialize crc16 param */
+    unsigned short crc = 0x0000;
+    unsigned short poly = 0x1021;
+    /* Get data from Start Bytes until Data */
+    std::vector <unsigned char> data = obj->getSpecificDataAsVector(obj, (*obj)[DataFrame::FRAME_TYPE_DATA]);
+    /* Calculate crc16 */
+    for (const auto &byte : data) {
+        crc ^= (static_cast<unsigned short>(byte) << 8);
+        for (int i = 0; i < 8; ++i) {
+            if (crc & 0x8000) {
+                crc = (crc << 1) ^ poly;
+            } else {
+                crc <<= 1;
+            }
+        }
+    }
+    /* Compare received CRC with calculated CRC */
+    unsigned short rcvCRC = 0;
+    frame.getData((unsigned char *) &rcvCRC, 2);
+    if (rcvCRC != crc){
+        /* invalid crc -> trigger stop flag to __readFramedData__ method */
+        obj->trigInvDataIndicator();
+    }
+}
+
+void setupLengthByCommand(DataFrame &frame, void *ptr){
+    int data = 0;
+    /* Get object form function param */
+    DataFrame *obj = (DataFrame *) ptr;
+    /* Get DataFrame target */
+    DataFrame *target = (*obj)[DataFrame::FRAME_TYPE_DATA];
+    if (target == nullptr) return;
+    frame.getData((unsigned char *) &data, 1);
+    if (data == 0x35){
+        /* setup 3 as data size of DataFrame::FRAME_TYPE_DATA */
+        target->setSize(3);
+    }
+    else if (data == 0x36){
+        /* setup 3 as data size of DataFrame::FRAME_TYPE_DATA */
+        target->setSize(2);
+    }
+    else {
+        /* invalid value found -> trigger stop flag to __readFramedData__ method */
+        obj->trigInvDataIndicator();
+    }
+}
+
 class DataFrameTest:public::testing::Test {
 protected:
     DataFrame dataFrame;
@@ -1613,6 +1663,49 @@ TEST_F(DataFrameTest, SetterAndGetter_14) {
     vec = dataFrame.getSpecificDataAsVector(begin, end);
     ASSERT_EQ(vec.size(), 9);
     ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "4567890-=", 9), 0);
+}
+
+/* Parse Test */
+
+TEST_F(DataFrameTest, ParseTest_1) {
+    std::vector <unsigned char> vec;
+    dataFrame.setReference("1234");
+    DataFrame cmdBytes(DataFrame::FRAME_TYPE_COMMAND, 1);
+    DataFrame dataBytes(DataFrame::FRAME_TYPE_DATA);
+    DataFrame crcValidatorBytes(DataFrame::FRAME_TYPE_VALIDATOR, 2);
+    DataFrame stopBytes(DataFrame::FRAME_TYPE_STOP_BYTES, "90-=");
+    cmdBytes.setPostExecuteFunction((const void *) &setupLengthByCommand, (void *) &dataFrame);
+    crcValidatorBytes.setPostExecuteFunction((const void *) &crc16, (void *) &dataFrame);
+    dataFrame += cmdBytes + dataBytes + crcValidatorBytes + stopBytes;
+    ASSERT_EQ(dataFrame.parse("\x31\x32\x33\x34\x35\x36\x37\x38\x15\x90\x39\x30\x2D\x3D"), true);
+    vec = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(memcmp(vec.data(), (const unsigned char *) "\x31\x32\x33\x34\x35\x36\x37\x38\x15\x90\x39\x30\x2D\x3D", vec.size()), 0);
+}
+
+TEST_F(DataFrameTest, ParseTest_2) {
+    std::vector <unsigned char> vec;
+    dataFrame.setReference("1234");
+    DataFrame cmdBytes(DataFrame::FRAME_TYPE_COMMAND, 1);
+    DataFrame dataBytes(DataFrame::FRAME_TYPE_DATA);
+    DataFrame crcValidatorBytes(DataFrame::FRAME_TYPE_VALIDATOR, 2);
+    DataFrame stopBytes(DataFrame::FRAME_TYPE_STOP_BYTES, "90-=");
+    cmdBytes.setPostExecuteFunction((const void *) &setupLengthByCommand, (void *) &dataFrame);
+    crcValidatorBytes.setPostExecuteFunction((const void *) &crc16, (void *) &dataFrame);
+    dataFrame += cmdBytes + dataBytes + crcValidatorBytes + stopBytes;
+    ASSERT_EQ(dataFrame.parse("\x31\x32\x33\x34\x37\x36\x37\x38\x15\x90\x39\x30\x2D\x3D"), false);
+}
+
+TEST_F(DataFrameTest, ParseTest_3) {
+    std::vector <unsigned char> vec;
+    dataFrame.setReference("1234");
+    DataFrame cmdBytes(DataFrame::FRAME_TYPE_COMMAND, 1);
+    DataFrame dataBytes(DataFrame::FRAME_TYPE_DATA);
+    DataFrame crcValidatorBytes(DataFrame::FRAME_TYPE_VALIDATOR, 2);
+    DataFrame stopBytes(DataFrame::FRAME_TYPE_STOP_BYTES, "90-=");
+    cmdBytes.setPostExecuteFunction((const void *) &setupLengthByCommand, (void *) &dataFrame);
+    crcValidatorBytes.setPostExecuteFunction((const void *) &crc16, (void *) &dataFrame);
+    dataFrame += cmdBytes + dataBytes + crcValidatorBytes + stopBytes;
+    ASSERT_EQ(dataFrame.parse("\x31\x32\x33\x34\x35\x36\x37\x38\x15\x91\x39\x30\x2D\x3D"), false);
 }
 
 /* Test Operator Overloading */
