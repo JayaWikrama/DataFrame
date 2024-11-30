@@ -575,6 +575,89 @@ std::vector <unsigned char> DataFrame::getSpecificDataAsVector(const DataFrame *
   return data;
 }
 
+void DataFrame::trigInvDataIndicator(){
+  this->isFormatValid = false;
+}
+
+bool DataFrame::parse(const unsigned char *data, size_t sz){
+  DataFrame *tmp = this;
+  std::vector <unsigned char> vecUC;
+  ssize_t tmpSz = 0;
+  void (*callback)(DataFrame &, void *) = nullptr;
+  this->isFormatValid = true;
+  size_t cpos = 0;
+  while (tmp != nullptr){
+    if (tmp->getExecuteFunction() != nullptr){
+      callback = (void (*)(DataFrame &, void *))tmp->getExecuteFunction();
+      callback(*tmp, tmp->getExecuteFunctionParam());
+    }
+    if ((tmp->getType() == DataFrame::FRAME_TYPE_START_BYTES || tmp->getType() == DataFrame::FRAME_TYPE_STOP_BYTES) && tmp->getReference(vecUC) > 0){
+      if (memcmp(vecUC.data(), data + cpos, vecUC.size())){
+        return false;
+      }
+      cpos += vecUC.size();
+    }
+    else if (tmp->getType() == DataFrame::FRAME_TYPE_CONTENT_LENGTH ||
+             tmp->getType() == DataFrame::FRAME_TYPE_COMMAND ||
+             tmp->getType() == DataFrame::FRAME_TYPE_SN ||
+             tmp->getType() == DataFrame::FRAME_TYPE_RFU ||
+             tmp->getType() == DataFrame::FRAME_TYPE_BLOCK_NUMBER ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_1 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_2 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_3 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_4 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_5 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_6 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_7 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_8 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_DATA_9 ||
+             tmp->getType() == DataFrame::FRAME_TYPE_VALIDATOR
+    ){
+        if (tmp->getSize() > 0){
+          tmp->setData(data + cpos, tmp->getSize());
+          cpos += tmp->getSize();
+        }
+        else if (tmp->getNext() != nullptr) {
+          if (tmp->getNext()->getType() == DataFrame::FRAME_TYPE_STOP_BYTES &&
+              tmp->getNext()->getReference(vecUC) > 0
+          ){
+            tmpSz = sz - cpos - tmp->getNext()->getSize();
+            if (tmpSz > 0){
+              tmp->setData(data + cpos, tmpSz);
+              cpos += tmp->getSize();
+            }
+            else {
+              return false;
+            }
+          }
+          else {
+            return false;
+          }
+        }
+        else {
+          return false;
+        }
+    }
+    else {
+      return false;
+    }
+    if (tmp->getPostExecuteFunction() != nullptr){
+      callback = (void (*)(DataFrame &, void *))tmp->getPostExecuteFunction();
+      callback(*tmp, tmp->getPostExecuteFunctionParam());
+    }
+    if (this->isFormatValid == false){
+      return false;
+    }
+    tmp = tmp->getNext();
+  }
+  return true;
+}
+
+bool DataFrame::parse(const char *data){
+  return this->parse((const unsigned char *) data, strlen(data));
+}
+
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
 void DataFrame::execute(){
   DataFrame *tmp = this;

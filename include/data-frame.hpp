@@ -8,6 +8,7 @@ class DataFrame {
   private:
     unsigned char type;
     bool isReference;
+    bool isFormatValid;
     size_t sz;
     std::vector <unsigned char> data;
 #ifdef __USE_EXE_FUNC
@@ -202,6 +203,12 @@ class DataFrame {
     std::vector <unsigned char> getAllDataAsVector();
 
     std::vector <unsigned char> getSpecificDataAsVector(const DataFrame *begin, const DataFrame *end);
+
+    void trigInvDataIndicator();
+
+    bool parse(const unsigned char *data, size_t sz);
+
+    bool parse(const char *data);
 
 #if defined(__USE_EXE_FUNC) || defined(__USE_POST_FUNC)
     void execute();
