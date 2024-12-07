@@ -49,6 +49,7 @@ endif()
 # Specify the source files
 set(SOURCE_FILES
     src/data-frame.cpp
+    src/validator.cpp
 )
 
 # Create static library
