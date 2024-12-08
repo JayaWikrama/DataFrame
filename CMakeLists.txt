@@ -77,7 +77,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}-lib)
 
 # Add test configuration (only when tests are enabled)
 if(BUILD_TESTS)
-  add_executable(${PROJECT_NAME}-test test/data-frame-test.cpp)
+  add_executable(${PROJECT_NAME}-test test/data-frame-test.cpp test/validator-test.cpp)
   target_link_libraries(${PROJECT_NAME}-test PRIVATE ${PROJECT_NAME}-lib)
   target_link_libraries(${PROJECT_NAME}-test PUBLIC gtest gtest_main)
   target_include_directories(${PROJECT_NAME}-test PUBLIC ${INCLUDE_DIRS} ${GTest_INCLUDE_DIRS})
