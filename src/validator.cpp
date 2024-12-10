@@ -3,12 +3,16 @@
 #include <iostream>
 #include "validator.hpp"
 
+static const unsigned char unused[] = {0x01, 0x02, 0x03, 0x04};
+
 bool Validator::checksum_simple_additive_check(const unsigned char *checksum_ref, const unsigned char *data, size_t dataSz){
   unsigned int checksum = static_cast<int>(this->init[0]);
   for (size_t i = 0; i < dataSz; ++i) {
     checksum += data[i];
   }
   checksum = checksum % 256;
+  this->lastChecksum.clear();
+  this->lastChecksum.push_back(static_cast<unsigned char>(checksum));
   return (static_cast<unsigned char>(checksum) == *checksum_ref);
 }
 
@@ -17,6 +21,8 @@ bool Validator::checksum_xor_check(const unsigned char *checksum_ref, const unsi
   for (size_t i = 0; i < dataSz; ++i) {
     checksum ^= data[i];
   }
+  this->lastChecksum.clear();
+  this->lastChecksum.push_back(checksum);
   return (checksum == *checksum_ref);
 }
 
@@ -27,6 +33,9 @@ bool Validator::checksum_fletcher_check(const unsigned char *checksum_ref, const
     sum1 = (sum1 + data[i]) % 255;
     sum2 = (sum2 + sum1) % 255;
   }
+  this->lastChecksum.clear();
+  this->lastChecksum.push_back(static_cast<unsigned char>(sum1));
+  this->lastChecksum.push_back(static_cast<unsigned char>(sum2));
   return (static_cast<unsigned char>(sum1) == checksum_ref[0]) && (static_cast<unsigned char>(sum2) == checksum_ref[1]);
 }
 
@@ -40,6 +49,8 @@ bool Validator::crc8_check(const unsigned char *checksum_ref, const unsigned cha
     }
   }
   crc ^= this->xorOut[0];
+  this->lastChecksum.clear();
+  this->lastChecksum.push_back(crc);
   return crc == *checksum_ref;
 }
 
@@ -58,6 +69,8 @@ bool Validator::crc16_check(const unsigned char *checksum_ref, const unsigned ch
   }
   crc ^= xorOut;
   unsigned short crc_ref = (checksum_ref[0] << 8) | checksum_ref[1];
+  this->lastChecksum.clear();
+  this->lastChecksum.assign((const unsigned char *) &crc, (const unsigned char *) &crc + 2);
   return crc == crc_ref;
 }
 
@@ -76,6 +89,8 @@ bool Validator::crc32_check(const unsigned char *checksum_ref, const unsigned ch
   }
   crc ^= xorOut;
   unsigned int crc_ref = (checksum_ref[0] << 24) | (checksum_ref[1] << 16) | (checksum_ref[2] << 8) | checksum_ref[3];
+  this->lastChecksum.clear();
+  this->lastChecksum.assign((const unsigned char *) &crc, (const unsigned char *) &crc + 4);
   return crc == crc_ref;
 }
 
@@ -84,6 +99,7 @@ Validator::Validator(Validator::VALIDATOR_TYPE_t type){
   this->poly.clear();
   this->init.clear();
   this->xorOut.clear();
+  this->lastChecksum.clear();
   switch (type){
     case Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE:
       this->init.push_back(0x00);
@@ -223,6 +239,31 @@ bool Validator::setXorOut(const unsigned char *xorOut, size_t sz){
   return true;
 }
 
+std::vector <unsigned char> Validator::getChecksum(const unsigned char *data, size_t dataSz){
+  this->validate(unused, data, dataSz);
+  return this->lastChecksum;
+}
+
+std::vector <unsigned char> Validator::getChecksum(const std::vector <unsigned char> &data){
+  this->validate(unused, data);
+  return this->lastChecksum;
+}
+
+std::vector <unsigned char> Validator::getChecksum(const DataFrame *begin, const DataFrame *end){
+  this->validate(unused, begin, end);
+  return this->lastChecksum;
+}
+
+std::vector <unsigned char> Validator::getChecksum(DataFrame &frame, DataFrame::FRAME_TYPE_t begin, DataFrame::FRAME_TYPE_t end){
+  this->validate(unused, frame, begin, end);
+  return this->lastChecksum;
+}
+
+std::vector <unsigned char> Validator::getChecksum(DataFrame *frame, DataFrame::FRAME_TYPE_t begin, DataFrame::FRAME_TYPE_t end){
+  this->validate(unused, frame, begin, end);
+  return this->lastChecksum;
+}
+
 bool Validator::validate(const unsigned char *ref, const unsigned char *data, size_t dataSz){
   switch (static_cast<Validator::VALIDATOR_TYPE_t>(this->type)){
     case Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE:
@@ -247,6 +288,7 @@ bool Validator::validate(const unsigned char *ref, const unsigned char *data, si
       return false;
     break;
   }
+  this->lastChecksum.clear();
   return false;
 }
 

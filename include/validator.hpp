@@ -10,6 +10,7 @@ class Validator {
     std::vector <unsigned char> poly;
     std::vector <unsigned char> init;
     std::vector <unsigned char> xorOut;
+    std::vector <unsigned char> lastChecksum;
     bool checksum_simple_additive_check(const unsigned char *checksum_ref, const unsigned char *data, size_t dataSz);
     bool checksum_xor_check(const unsigned char *checksum_ref, const unsigned char *data, size_t dataSz);
     bool checksum_fletcher_check(const unsigned char *checksum_ref, const unsigned char *data, size_t dataSz);
@@ -34,6 +35,16 @@ class Validator {
     bool setInitialValue(const unsigned char *initialValue, size_t sz);
 
     bool setXorOut(const unsigned char *xorOut, size_t sz);
+
+    std::vector <unsigned char> getChecksum(const unsigned char *data, size_t dataSz);
+
+    std::vector <unsigned char> getChecksum(const std::vector <unsigned char> &data);
+
+    std::vector <unsigned char> getChecksum(const DataFrame *begin, const DataFrame *end);
+
+    std::vector <unsigned char> getChecksum(DataFrame &frame, DataFrame::FRAME_TYPE_t begin, DataFrame::FRAME_TYPE_t end);
+
+    std::vector <unsigned char> getChecksum(DataFrame *frame, DataFrame::FRAME_TYPE_t begin, DataFrame::FRAME_TYPE_t end);
 
     bool validate(const unsigned char *ref, const unsigned char *data, size_t dataSz);
 
