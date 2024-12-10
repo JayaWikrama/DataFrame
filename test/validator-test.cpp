@@ -331,3 +331,261 @@ TEST_F(ValidatorTest, CRC32_AIXM_5) {
     dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x3D\xAD\x90\xC1");
     ASSERT_EQ(validator.validate((const unsigned char *) "\x3D\xAD\x90\xC1", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
+
+/* Test Case for Simple Additive Checksum Calculator */
+TEST_F(ValidatorTest, calc_SimpleAdditive_1) {
+    Validator validator(Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data.data(), data.size());
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x54", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_SimpleAdditive_2) {
+    Validator validator(Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x54", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_SimpleAdditive_3) {
+    Validator validator(Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x54");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x54", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_SimpleAdditive_4) {
+    Validator validator(Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x54");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x54", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_SimpleAdditive_5) {
+    Validator validator(Validator::VALIDATOR_TYPE_SIMPLE_ADDITIVE);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x54");
+    std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x54", checksum.size()), 0);
+}
+
+/* Test Case for XORing Checksum Calculator */
+TEST_F(ValidatorTest, calc_XOR_1) {
+    Validator validator(Validator::VALIDATOR_TYPE_XOR);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data.data(), data.size());
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x7C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_XOR_2) {
+    Validator validator(Validator::VALIDATOR_TYPE_XOR);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x7C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_XOR_3) {
+    Validator validator(Validator::VALIDATOR_TYPE_XOR);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x7C");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x7C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_XOR_4) {
+    Validator validator(Validator::VALIDATOR_TYPE_XOR);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x7C");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x7C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_XOR_5) {
+    Validator validator(Validator::VALIDATOR_TYPE_XOR);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x7C");
+    std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x7C", checksum.size()), 0);
+}
+
+/* Test Case for Fletcher Checksum Calculator */
+TEST_F(ValidatorTest, calc_Fletcher_1) {
+    Validator validator(Validator::VALIDATOR_TYPE_FLETCHER);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data.data(), data.size());
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x75\x12", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_Fletcher_2) {
+    Validator validator(Validator::VALIDATOR_TYPE_FLETCHER);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x75\x12", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_Fletcher_3) {
+    Validator validator(Validator::VALIDATOR_TYPE_FLETCHER);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x75\x12");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x75\x12", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_Fletcher_4) {
+    Validator validator(Validator::VALIDATOR_TYPE_FLETCHER);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x75\x12");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x75\x12", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_Fletcher_5) {
+    Validator validator(Validator::VALIDATOR_TYPE_FLETCHER);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x75\x12");
+    std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x75\x12", checksum.size()), 0);
+}
+
+/* Test Case for CRC8 Checksum Calculator */
+TEST_F(ValidatorTest, calc_CRC8_1) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC8);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data.data(), data.size());
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x4C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC8_2) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC8);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x4C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC8_3) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC8);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x4C");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x4C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC8_4) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC8);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x4C");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x4C", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC8_5) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC8);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x4C");
+    std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 1);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x4C", checksum.size()), 0);
+}
+
+/* Test Case for CRC16 Checksum Calculator */
+TEST_F(ValidatorTest, calc_CRC16_1) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC16);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data.data(), data.size());
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC16_2) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC16);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC16_3) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC16);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC16_4) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC16);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC16_5) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC16);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
+    std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 2);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
+}
+
+/* Test Case for CRC32 Checksum Calculator */
+TEST_F(ValidatorTest, calc_CRC32_1) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC32);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data.data(), data.size());
+    ASSERT_EQ(checksum.size(), 4);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC32_2) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC32);
+    std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
+    ASSERT_EQ(data.size(), 128);
+    std::vector <unsigned char> checksum = validator.getChecksum(data);
+    ASSERT_EQ(checksum.size(), 4);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC32_3) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC32);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
+    ASSERT_EQ(checksum.size(), 4);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC32_4) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC32);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
+    std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 4);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
+}
+
+TEST_F(ValidatorTest, calc_CRC32_5) {
+    Validator validator(Validator::VALIDATOR_TYPE_CRC32);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
+    std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
+    ASSERT_EQ(checksum.size(), 4);
+    ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
+}
