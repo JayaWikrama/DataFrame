@@ -68,7 +68,7 @@ bool Validator::crc16_check(const unsigned char *checksum_ref, const unsigned ch
     }
   }
   crc ^= xorOut;
-  unsigned short crc_ref = (checksum_ref[0] << 8) | checksum_ref[1];
+  unsigned short crc_ref = (checksum_ref[1] << 8) | checksum_ref[0];
   this->lastChecksum.clear();
   this->lastChecksum.assign((const unsigned char *) &crc, (const unsigned char *) &crc + 2);
   return crc == crc_ref;
@@ -88,7 +88,7 @@ bool Validator::crc32_check(const unsigned char *checksum_ref, const unsigned ch
     }
   }
   crc ^= xorOut;
-  unsigned int crc_ref = (checksum_ref[0] << 24) | (checksum_ref[1] << 16) | (checksum_ref[2] << 8) | checksum_ref[3];
+  unsigned int crc_ref = (checksum_ref[3] << 24) | (checksum_ref[2] << 16) | (checksum_ref[1] << 8) | checksum_ref[0];
   this->lastChecksum.clear();
   this->lastChecksum.assign((const unsigned char *) &crc, (const unsigned char *) &crc + 4);
   return crc == crc_ref;

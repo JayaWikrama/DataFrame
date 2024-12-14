@@ -167,32 +167,32 @@ TEST_F(ValidatorTest, CRC16_1) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xAC\x86", data.data(), data.size()), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x86\xAC", data.data(), data.size()), true);
 }
 
 TEST_F(ValidatorTest, CRC16_2) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xAC\x86", data), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x86\xAC", data), true);
 }
 
 TEST_F(ValidatorTest, CRC16_3) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xAC\x86", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x86\xAC");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x86\xAC", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
 }
 
 TEST_F(ValidatorTest, CRC16_4) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xAC\x86", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x86\xAC");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x86\xAC", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 TEST_F(ValidatorTest, CRC16_5) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xAC\x86", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x86\xAC");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x86\xAC", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 TEST_F(ValidatorTest, CRC16_IBM_3740_1) {
@@ -201,7 +201,7 @@ TEST_F(ValidatorTest, CRC16_IBM_3740_1) {
     validator.setPoly((const unsigned char *) &customPoly, 2);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x0A\x9E", data.data(), data.size()), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x9E\x0A", data.data(), data.size()), true);
 }
 
 TEST_F(ValidatorTest, CRC16_IBM_3740_2) {
@@ -210,31 +210,31 @@ TEST_F(ValidatorTest, CRC16_IBM_3740_2) {
     validator.setPoly((const unsigned char *) &customPoly, 2);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x0A\x9E", data), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x9E\x0A", data), true);
 }
 
 TEST_F(ValidatorTest, CRC16_IBM_3740_3) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
     unsigned short customPoly = 0x1021;
     validator.setPoly((const unsigned char *) &customPoly, 2);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x0A\x9E");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x0A\x9E", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x9E\x0A");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x9E\x0A", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
 }
 
 TEST_F(ValidatorTest, CRC16_IBM_3740_4) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
     unsigned short customPoly = 0x1021;
     validator.setPoly((const unsigned char *) &customPoly, 2);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x0A\x9E");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x0A\x9E", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x9E\x0A");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x9E\x0A", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 TEST_F(ValidatorTest, CRC16_IBM_3740_5) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
     unsigned short customPoly = 0x1021;
     validator.setPoly((const unsigned char *) &customPoly, 2);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x0A\x9E");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x0A\x9E", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x9E\x0A");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x9E\x0A", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 /* Test Case for CRC32 Validator */
@@ -242,32 +242,32 @@ TEST_F(ValidatorTest, CRC32_1) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x6C\x6A\x05", data.data(), data.size()), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x05\x6A\x6C\xC1", data.data(), data.size()), true);
 }
 
 TEST_F(ValidatorTest, CRC32_2) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x6C\x6A\x05", data), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x05\x6A\x6C\xC1", data), true);
 }
 
 TEST_F(ValidatorTest, CRC32_3) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x6C\x6A\x05", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x05\x6A\x6C\xC1");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x05\x6A\x6C\xC1", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
 }
 
 TEST_F(ValidatorTest, CRC32_4) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x6C\x6A\x05", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x05\x6A\x6C\xC1");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x05\x6A\x6C\xC1", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 TEST_F(ValidatorTest, CRC32_5) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x6C\x6A\x05", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x05\x6A\x6C\xC1");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\x05\x6A\x6C\xC1", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 TEST_F(ValidatorTest, CRC32_AIXM_1) {
@@ -280,7 +280,7 @@ TEST_F(ValidatorTest, CRC32_AIXM_1) {
     validator.setXorOut((const unsigned char *) &xorOut, 4);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x3D\xAD\x90\xC1", data.data(), data.size()), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x90\xAD\x3D", data.data(), data.size()), true);
 }
 
 TEST_F(ValidatorTest, CRC32_AIXM_2) {
@@ -293,7 +293,7 @@ TEST_F(ValidatorTest, CRC32_AIXM_2) {
     validator.setXorOut((const unsigned char *) &xorOut, 4);
     std::vector <unsigned char> data = dataFrame.getAllDataAsVector();
     ASSERT_EQ(data.size(), 128);
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x3D\xAD\x90\xC1", data), true);
+    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x90\xAD\x3D", data), true);
 }
 
 TEST_F(ValidatorTest, CRC32_AIXM_3) {
@@ -304,8 +304,8 @@ TEST_F(ValidatorTest, CRC32_AIXM_3) {
     validator.setPoly((const unsigned char *) &poly, 4);
     validator.setInitialValue((const unsigned char *) &init, 4);
     validator.setXorOut((const unsigned char *) &xorOut, 4);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x3D\xAD\x90\xC1");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x3D\xAD\x90\xC1", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x90\xAD\x3D");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x90\xAD\x3D", dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]), true);
 }
 
 TEST_F(ValidatorTest, CRC32_AIXM_4) {
@@ -316,8 +316,8 @@ TEST_F(ValidatorTest, CRC32_AIXM_4) {
     validator.setPoly((const unsigned char *) &poly, 4);
     validator.setInitialValue((const unsigned char *) &init, 4);
     validator.setXorOut((const unsigned char *) &xorOut, 4);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x3D\xAD\x90\xC1");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x3D\xAD\x90\xC1", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x90\xAD\x3D");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x90\xAD\x3D", dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 TEST_F(ValidatorTest, CRC32_AIXM_5) {
@@ -328,8 +328,8 @@ TEST_F(ValidatorTest, CRC32_AIXM_5) {
     validator.setPoly((const unsigned char *) &poly, 4);
     validator.setInitialValue((const unsigned char *) &init, 4);
     validator.setXorOut((const unsigned char *) &xorOut, 4);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x3D\xAD\x90\xC1");
-    ASSERT_EQ(validator.validate((const unsigned char *) "\x3D\xAD\x90\xC1", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x90\xAD\x3D");
+    ASSERT_EQ(validator.validate((const unsigned char *) "\xC1\x90\xAD\x3D", &dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA), true);
 }
 
 /* Test Case for Simple Additive Checksum Calculator */
@@ -525,7 +525,7 @@ TEST_F(ValidatorTest, calc_CRC16_2) {
 
 TEST_F(ValidatorTest, calc_CRC16_3) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x86\xAC");
     std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
     ASSERT_EQ(checksum.size(), 2);
     ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
@@ -533,7 +533,7 @@ TEST_F(ValidatorTest, calc_CRC16_3) {
 
 TEST_F(ValidatorTest, calc_CRC16_4) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x86\xAC");
     std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
     ASSERT_EQ(checksum.size(), 2);
     ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
@@ -541,7 +541,7 @@ TEST_F(ValidatorTest, calc_CRC16_4) {
 
 TEST_F(ValidatorTest, calc_CRC16_5) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC16);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xAC\x86");
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x86\xAC");
     std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
     ASSERT_EQ(checksum.size(), 2);
     ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x86\xAC", checksum.size()), 0);
@@ -568,7 +568,7 @@ TEST_F(ValidatorTest, calc_CRC32_2) {
 
 TEST_F(ValidatorTest, calc_CRC32_3) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x05\x6A\x6C\xC1");
     std::vector <unsigned char> checksum = validator.getChecksum(dataFrame[DataFrame::FRAME_TYPE_START_BYTES], dataFrame[DataFrame::FRAME_TYPE_DATA]);
     ASSERT_EQ(checksum.size(), 4);
     ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
@@ -576,7 +576,7 @@ TEST_F(ValidatorTest, calc_CRC32_3) {
 
 TEST_F(ValidatorTest, calc_CRC32_4) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x05\x6A\x6C\xC1");
     std::vector <unsigned char> checksum = validator.getChecksum(dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
     ASSERT_EQ(checksum.size(), 4);
     ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
@@ -584,7 +584,7 @@ TEST_F(ValidatorTest, calc_CRC32_4) {
 
 TEST_F(ValidatorTest, calc_CRC32_5) {
     Validator validator(Validator::VALIDATOR_TYPE_CRC32);
-    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\xC1\x6C\x6A\x05");
+    dataFrame += DataFrame(DataFrame::FRAME_TYPE_VALIDATOR, "\x05\x6A\x6C\xC1");
     std::vector <unsigned char> checksum = validator.getChecksum(&dataFrame, DataFrame::FRAME_TYPE_START_BYTES, DataFrame::FRAME_TYPE_DATA);
     ASSERT_EQ(checksum.size(), 4);
     ASSERT_EQ(memcmp(checksum.data(), (const unsigned char *) "\x05\x6A\x6C\xC1", checksum.size()), 0);
